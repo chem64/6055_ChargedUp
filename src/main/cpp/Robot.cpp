@@ -82,13 +82,13 @@ void Robot::RobotPeriodic()
   if(counter3 >= 50) //1 secs
   {
     counter3=0;
-    ntBOSS->PutNumber("FR_POS",CheckWrap(m_frEncoder.GetPosition()-constants::kFrontRightOffset));
+    ntBOSS->PutNumber("FR_DIR",frSwerve.turnPV);
     ntBOSS->PutNumber("FR_DIST", m_frDrive.GetSelectedSensorPosition() * constants::kDriveUnitsToFeet);
-    ntBOSS->PutNumber("FL_POS",CheckWrap(m_flEncoder.GetPosition()-constants::kFrontLeftOffset));
+    ntBOSS->PutNumber("FL_DIR",flSwerve.turnPV);
     ntBOSS->PutNumber("FL_DIST", m_flDrive.GetSelectedSensorPosition() * constants::kDriveUnitsToFeet);
-    ntBOSS->PutNumber("RL_POS",CheckWrap(m_rlEncoder.GetPosition()-constants::kRearLeftOffset));
+    ntBOSS->PutNumber("RL_DIR",rlSwerve.turnPV);
     ntBOSS->PutNumber("RL_DIST", m_rlDrive.GetSelectedSensorPosition() * constants::kDriveUnitsToFeet);
-    ntBOSS->PutNumber("RR_POS",CheckWrap(m_rrEncoder.GetPosition()-constants::kRearRightOffset));
+    ntBOSS->PutNumber("RR_DIR",rrSwerve.turnPV);
     ntBOSS->PutNumber("RR_DIST", m_rrDrive.GetSelectedSensorPosition() * constants::kDriveUnitsToFeet);
     ntBOSS->PutNumber("Winch",m_winch1.GetSelectedSensorPosition());
     ntBOSS->PutNumber("joy_FORWARD", forward);

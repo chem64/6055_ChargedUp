@@ -76,64 +76,52 @@ class Robot : public frc::TimedRobot {
     frc::Servo ArmBrake{0};         
 
     //SWERVE
+
+    struct SwerveType
+    {
+      double actAngle;  //current encoder position - encoder offset
+      double turnSP;    //desired direction from joystick
+      double turnPV;    //effective angle - direction wheel is moving
+      double flip;      //-1 if drive is reversed, 1 if drive is not reversed
+      double turnOUT;   //output to turn motor
+      double driveOUT;  //output to drive motor
+    };
+
+    SwerveType frSwerve;
+    SwerveType flSwerve;
+    SwerveType rlSwerve;
+    SwerveType rrSwerve;
     
-    double lastFR_SP = 0.0;
-    double lastFL_SP = 0.0;
-    double lastRL_SP = 0.0;
-    double lastRR_SP = 0.0;
-    double driveOut = 0.0;
-    double rollDeg = 0.0;
     frc2::PIDController m_TurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
     frc::SlewRateLimiter<units::scalar> spdFilter{2/1_s};
     
-    double frFlip = 1.0;
-    double flFlip = 1.0;
-    double rlFlip = 1.0;
-    double rrFlip = 1.0;
-
+    
     double forward;
     double strafe;
     double rotate;
 
-    double L;
-    double W;
-    double R;
+    
+    SupplyCurrentLimitConfiguration driveSCLC;
+    StatorCurrentLimitConfiguration driveStatorSCLC;
+    SupplyCurrentLimitConfiguration turnSCLC;
+    StatorCurrentLimitConfiguration turnStatorSCLC; 
 
-	  double A;
-    double B;
-    double C;
-    double D;
+    //Auto
+    int AutoState = 0;
+    frc::Timer *AutoTimer;
+    frc::Timer *ModeTimer;
+    units::time::second_t ClockStart;
+    units::time::second_t ClockNow;
+    
+    BufferedTrajectoryPointStream *AutoRev16_LeftBufStrm;
+    BufferedTrajectoryPointStream *AutoRev16_RightBufStrm;
+    BufferedTrajectoryPointStream *AutoFwd2_LeftBufStrm;
+    BufferedTrajectoryPointStream *AutoFwd2_RightBufStrm;
 
-    double ws1;
-    double wa1;
-    double ws2;
-    double wa2;
-    double ws3;
-    double wa3;
-    double ws4;
-    double wa4;
-
-  SupplyCurrentLimitConfiguration driveSCLC;
-  StatorCurrentLimitConfiguration driveStatorSCLC;
-  SupplyCurrentLimitConfiguration turnSCLC;
-  StatorCurrentLimitConfiguration turnStatorSCLC; 
-
-  //Auto
-  int AutoState = 0;
-  frc::Timer *AutoTimer;
-  frc::Timer *ModeTimer;
-  units::time::second_t ClockStart;
-  units::time::second_t ClockNow;
-  
-  BufferedTrajectoryPointStream *AutoRev16_LeftBufStrm;
-  BufferedTrajectoryPointStream *AutoRev16_RightBufStrm;
-  BufferedTrajectoryPointStream *AutoFwd2_LeftBufStrm;
-  BufferedTrajectoryPointStream *AutoFwd2_RightBufStrm;
-
-  //dashboard variables
-  bool FMSMatch = false;  //true if attached to FMS
-  bool MatchStart = false;
-  int dAutoSelect = 0;
-  int CurMode = 0;
+    //dashboard variables
+    bool FMSMatch = false;  //true if attached to FMS
+    bool MatchStart = false;
+    int dAutoSelect = 0;
+    int CurMode = 0;
 
   };

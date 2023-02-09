@@ -8,9 +8,7 @@
 
 namespace constants
 {
-  constexpr bool kSwerveOptimizeAngles = true;
   constexpr double kSwerveAngleBreak = 100;
-  constexpr bool kSwerveReturnToZero = false;
   constexpr double kSwerveDriveSpeedFilter = 2.0;  //smaller is more filtering (slower to reach top speed) - will bypass filter when joystick released
 
   constexpr double kSelfLevelDeadband = 3.0;  //deadband before level correction is done
