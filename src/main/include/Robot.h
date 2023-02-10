@@ -79,12 +79,12 @@ class Robot : public frc::TimedRobot {
 
     struct SwerveType
     {
-      double actAngle;  //current encoder position - encoder offset
-      double turnSP;    //desired direction from joystick
-      double turnPV;    //effective angle - direction wheel is moving
-      double flip;      //-1 if drive is reversed, 1 if drive is not reversed
-      double turnOUT;   //output to turn motor
-      double driveOUT;  //output to drive motor
+      double actAngle = 0.0;  //current encoder position - encoder offset
+      double turnSP = 0.0;    //desired direction from joystick
+      double turnPV = 0.0;    //effective angle - direction wheel is moving
+      double flip = 1.0;      //-1 if drive is reversed, 1 if drive is not reversed
+      double turnOUT = 0.0;   //output to turn motor
+      double driveOUT = 0.0;  //output to drive motor
     };
 
     SwerveType frSwerve;
@@ -94,12 +94,10 @@ class Robot : public frc::TimedRobot {
     
     frc2::PIDController m_TurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
     frc::SlewRateLimiter<units::scalar> spdFilter{2/1_s};
-    
-    
+       
     double forward;
     double strafe;
     double rotate;
-
     
     SupplyCurrentLimitConfiguration driveSCLC;
     StatorCurrentLimitConfiguration driveStatorSCLC;

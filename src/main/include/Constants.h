@@ -8,7 +8,7 @@
 
 namespace constants
 {
-  constexpr double kSwerveAngleBreak = 100;
+  constexpr double kSwerveAngleBreak = 90;
   constexpr double kSwerveDriveSpeedFilter = 2.0;  //smaller is more filtering (slower to reach top speed) - will bypass filter when joystick released
 
   constexpr double kSelfLevelDeadband = 3.0;  //deadband before level correction is done
@@ -35,7 +35,7 @@ namespace constants
   constexpr int kRearRightDrive_ID = 20;
   constexpr int kRearRightEncoder_ID = 7;
 
-  constexpr int kWinch1_ID = 26;
+  constexpr int kWinch1_ID = 17;  //1ft = -12150  2ft = 24296
 
   constexpr double kEncoderCountsPerDegree = 4096.0 / 360.0;
 

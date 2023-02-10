@@ -83,13 +83,13 @@ void Robot::RobotPeriodic()
   {
     counter3=0;
     ntBOSS->PutNumber("FR_DIR",frSwerve.turnPV);
-    ntBOSS->PutNumber("FR_DIST", m_frDrive.GetSelectedSensorPosition() * constants::kDriveUnitsToFeet);
+    ntBOSS->PutNumber("FR_DIST", frSwerve.driveOUT);
     ntBOSS->PutNumber("FL_DIR",flSwerve.turnPV);
-    ntBOSS->PutNumber("FL_DIST", m_flDrive.GetSelectedSensorPosition() * constants::kDriveUnitsToFeet);
+    ntBOSS->PutNumber("FL_DIST", flSwerve.driveOUT);
     ntBOSS->PutNumber("RL_DIR",rlSwerve.turnPV);
-    ntBOSS->PutNumber("RL_DIST", m_rlDrive.GetSelectedSensorPosition() * constants::kDriveUnitsToFeet);
+    ntBOSS->PutNumber("RL_DIST", rlSwerve.driveOUT);
     ntBOSS->PutNumber("RR_DIR",rrSwerve.turnPV);
-    ntBOSS->PutNumber("RR_DIST", m_rrDrive.GetSelectedSensorPosition() * constants::kDriveUnitsToFeet);
+    ntBOSS->PutNumber("RR_DIST", rrSwerve.driveOUT);
     ntBOSS->PutNumber("Winch",m_winch1.GetSelectedSensorPosition());
     ntBOSS->PutNumber("joy_FORWARD", forward);
     ntBOSS->PutNumber("joy_STRAFE", strafe);
