@@ -4,6 +4,8 @@ void Robot::RobotInit()
 {
   ntBOSS = nt::NetworkTableInstance::GetDefault().GetTable("dashBOSS");
   ConfigMotors();
+  if(constants::kUseStickBOSS) m_stickBOSS = new frc::Joystick(0);
+  else m_driveController = new frc::XboxController(0);
   ArmBrake.SetBounds(2.0, 1.8, 1.5, 1.2, 1.0); 
   m_TurnPID.EnableContinuousInput(-180.0,180.0); //required for swerve
   try
@@ -90,10 +92,10 @@ void Robot::RobotPeriodic()
     ntBOSS->PutNumber("RL_DIST", rlSwerve.driveOUT);
     ntBOSS->PutNumber("RR_DIR",rrSwerve.turnPV);
     ntBOSS->PutNumber("RR_DIST", rrSwerve.driveOUT);
-    ntBOSS->PutNumber("Winch",m_winch1.GetSelectedSensorPosition());
-    ntBOSS->PutNumber("joy_FORWARD", forward);
-    ntBOSS->PutNumber("joy_STRAFE", strafe);
-    ntBOSS->PutNumber("joy_ROTATE", rotate);
+    ntBOSS->PutNumber("Winch",fabs(m_winch1.GetSelectedSensorPosition())/constants::kWinchCountsPerInch);
+    //ntBOSS->PutNumber("joy_FORWARD", forward);
+    //ntBOSS->PutNumber("joy_STRAFE", strafe);
+    //ntBOSS->PutNumber("joy_ROTATE", rotate);
     ntBOSS->PutNumber("HeadingOffset", HeadingOffset);
     ntBOSS->PutNumber("Heading", Heading);
     ntBOSS->PutNumber("SwerveOrientationToField", SwerveOrientationToField);
@@ -133,10 +135,22 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic() 
 {
+  bool button1_Pressed;
   //xbox
-  forward = -(m_driveController.GetRightY());
-  strafe =  m_driveController.GetRightX();
-  rotate = m_driveController.GetLeftX();
+  if(constants::kUseStickBOSS)
+  {
+    forward = -(m_stickBOSS->GetRawAxis(1));
+    strafe =  m_stickBOSS->GetRawAxis(0);
+    rotate = m_stickBOSS->GetRawAxis(3);
+    button1_Pressed = m_stickBOSS->GetRawButtonPressed(1);
+  }
+  else
+  {
+    forward = -(m_driveController->GetRightY());
+    strafe =  m_driveController->GetRightX();
+    rotate = m_driveController->GetLeftX();
+    button1_Pressed = m_driveController->GetRawButtonPressed(1);
+  }
   
   if(fabs(forward)<.15) {forward = 0;}
   double fforward = spdFilter.Calculate(forward);
@@ -147,7 +161,7 @@ void Robot::TeleopPeriodic()
   DriveSwerve(forward, strafe, rotate);
 
   //toggle robot/field orientation for swerve drive
-  if(m_driveController.GetRawButtonPressed(1)) {SwerveOrientationToField = !SwerveOrientationToField;}
+  if(button1_Pressed) {SwerveOrientationToField = !SwerveOrientationToField;}
 }
 
 void Robot::DisabledInit() 
@@ -171,10 +185,10 @@ void Robot::TestPeriodic()
   To drive half way, the position is set to 0.5 
   To drive fully in, the position is set to 0.0
   ArmBrake.SetBounds(2.0, 1.8, 1.5, 1.2, 1.0); */
-  static bool BrakeOn;
+  /*static bool BrakeOn;
   if(m_driveController.GetRawButtonPressed(1)) BrakeOn = !BrakeOn;
   if(BrakeOn) ArmBrake.SetPosition(0.0);  //retracted in
-  if(!BrakeOn) ArmBrake.SetPosition(1.0); //extended out
+  if(!BrakeOn) ArmBrake.SetPosition(1.0); //extended out */
 
 
 }

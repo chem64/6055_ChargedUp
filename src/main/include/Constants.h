@@ -1,13 +1,9 @@
 #pragma once
 #include <units/angular_velocity.h>
-//Step1:  Set wheelbase and wheelwidth
-//Step2:  Set all CAN ID numbers using Phoenix Tuner
-//Step3:  Set each wheel to point forward (use straight-edge)
-//Step4:  Set offset for each wheel (below) using absolute degrees from Tuner self-test snapshot
-//Step5:  Adjust tuning numbers as necessary
 
 namespace constants
 {
+  constexpr bool kUseStickBOSS = false;
   constexpr double kSwerveAngleBreak = 90;
   constexpr double kSwerveDriveSpeedFilter = 2.0;  //smaller is more filtering (slower to reach top speed) - will bypass filter when joystick released
 
@@ -35,7 +31,9 @@ namespace constants
   constexpr int kRearRightDrive_ID = 20;
   constexpr int kRearRightEncoder_ID = 7;
 
-  constexpr int kWinch1_ID = 17;  //1ft = -12150  2ft = 24296
+  constexpr int kWinch1_ID = 17;  //1ft = -12150  2ft = -24296
+  constexpr int kWinch2_ID = 18;
+  constexpr int kWinchCountsPerInch = 1012.4;
 
   constexpr double kEncoderCountsPerDegree = 4096.0 / 360.0;
 

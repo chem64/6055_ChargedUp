@@ -47,7 +47,8 @@ class Robot : public frc::TimedRobot {
 
   private:
 
-    frc::XboxController m_driveController{0};
+    frc::XboxController *m_driveController;
+    frc::Joystick *m_stickBOSS;
     std::shared_ptr<nt::NetworkTable> ntBOSS;
     AHRS *ahrs;
     double HeadingOffset = 0;
