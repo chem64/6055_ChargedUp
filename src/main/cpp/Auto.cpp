@@ -2,7 +2,7 @@
 
 bool Robot::AutoIsRunning()
 {
-  if (!m_flDrive.IsMotionProfileFinished() && !m_frDrive.IsMotionProfileFinished())
+  if (!can_flDrive.IsMotionProfileFinished() && !can_frDrive.IsMotionProfileFinished())
     return true;
   else return false;
 }
@@ -10,10 +10,10 @@ bool Robot::AutoIsRunning()
 void Robot::ZeroDistance()
 {
   //set ticks equal to zero
-  m_frDrive.GetSensorCollection().SetIntegratedSensorPosition(0,10);
-  m_flDrive.GetSensorCollection().SetIntegratedSensorPosition(0,10);
-  m_rlDrive.GetSensorCollection().SetIntegratedSensorPosition(0,10);
-  m_rrDrive.GetSensorCollection().SetIntegratedSensorPosition(0,10);
+  can_frDrive.GetSensorCollection().SetIntegratedSensorPosition(0,10);
+  can_flDrive.GetSensorCollection().SetIntegratedSensorPosition(0,10);
+  can_rlDrive.GetSensorCollection().SetIntegratedSensorPosition(0,10);
+  can_rrDrive.GetSensorCollection().SetIntegratedSensorPosition(0,10);
 }
 
 void Robot::AutoReset()
@@ -30,17 +30,17 @@ void Robot::Self_Level()
     if(fabs(rollDeg) > constants::kSelfLevelDeadband)
     {
         driveOut = sin(rollDeg) * constants::kSelfLevelGain;  //roll in reverse direction of declining angle - drive toward the tilt up
-        m_frDrive.Set(ControlMode::PercentOutput,std::clamp(driveOut,-1.0,1.0));
-        m_flDrive.Set(ControlMode::PercentOutput,std::clamp(driveOut,-1.0,1.0));
-        m_rlDrive.Set(ControlMode::PercentOutput,std::clamp(driveOut,-1.0,1.0));
-        m_rrDrive.Set(ControlMode::PercentOutput,std::clamp(driveOut,-1.0,1.0));
+        can_frDrive.Set(ControlMode::PercentOutput,std::clamp(driveOut,-1.0,1.0));
+        can_flDrive.Set(ControlMode::PercentOutput,std::clamp(driveOut,-1.0,1.0));
+        can_rlDrive.Set(ControlMode::PercentOutput,std::clamp(driveOut,-1.0,1.0));
+        can_rrDrive.Set(ControlMode::PercentOutput,std::clamp(driveOut,-1.0,1.0));
     }
     else
     {
-        m_frDrive.Set(ControlMode::PercentOutput,0.0);
-        m_flDrive.Set(ControlMode::PercentOutput,0.0);
-        m_rlDrive.Set(ControlMode::PercentOutput,0.0);
-        m_rrDrive.Set(ControlMode::PercentOutput,0.0);
+        can_frDrive.Set(ControlMode::PercentOutput,0.0);
+        can_flDrive.Set(ControlMode::PercentOutput,0.0);
+        can_rlDrive.Set(ControlMode::PercentOutput,0.0);
+        can_rrDrive.Set(ControlMode::PercentOutput,0.0);
     }
 }
 
@@ -92,10 +92,10 @@ void::Robot::RunAuto_1()
             break;
         case 20: //start drive control
             ntBOSS->PutString("AutoStatus", "AUTO1_REV16");
-            m_flDrive.StartMotionProfile(*AutoRev16_LeftBufStrm, 10, ControlMode::MotionProfile);
-            m_rlDrive.StartMotionProfile(*AutoRev16_LeftBufStrm, 10, ControlMode::MotionProfile);
-            m_frDrive.StartMotionProfile(*AutoRev16_RightBufStrm, 10, ControlMode::MotionProfile);
-            m_rrDrive.StartMotionProfile(*AutoRev16_RightBufStrm, 10, ControlMode::MotionProfile);
+            can_flDrive.StartMotionProfile(*AutoRev16_LeftBufStrm, 10, ControlMode::MotionProfile);
+            can_rlDrive.StartMotionProfile(*AutoRev16_LeftBufStrm, 10, ControlMode::MotionProfile);
+            can_frDrive.StartMotionProfile(*AutoRev16_RightBufStrm, 10, ControlMode::MotionProfile);
+            can_rrDrive.StartMotionProfile(*AutoRev16_RightBufStrm, 10, ControlMode::MotionProfile);
             AutoState = 30;
             //if(constants::kAutoLoggingEnabled) ntBOSS->PutNumber("AutoState", AutoState);
             break;
@@ -109,10 +109,10 @@ void::Robot::RunAuto_1()
             break;
         case 40: //start drive control
             ntBOSS->PutString("AutoStatus", "AUTO1_FWD2");
-            m_flDrive.StartMotionProfile(*AutoFwd2_LeftBufStrm, 10, ControlMode::MotionProfile);
-            m_rlDrive.StartMotionProfile(*AutoFwd2_LeftBufStrm, 10, ControlMode::MotionProfile);
-            m_frDrive.StartMotionProfile(*AutoFwd2_RightBufStrm, 10, ControlMode::MotionProfile);
-            m_rrDrive.StartMotionProfile(*AutoFwd2_RightBufStrm, 10, ControlMode::MotionProfile);
+            can_flDrive.StartMotionProfile(*AutoFwd2_LeftBufStrm, 10, ControlMode::MotionProfile);
+            can_rlDrive.StartMotionProfile(*AutoFwd2_LeftBufStrm, 10, ControlMode::MotionProfile);
+            can_frDrive.StartMotionProfile(*AutoFwd2_RightBufStrm, 10, ControlMode::MotionProfile);
+            can_rrDrive.StartMotionProfile(*AutoFwd2_RightBufStrm, 10, ControlMode::MotionProfile);
             AutoState = 50;
             //if(constants::kAutoLoggingEnabled) ntBOSS->PutNumber("AutoState", AutoState);
             break;

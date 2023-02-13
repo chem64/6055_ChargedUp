@@ -4,10 +4,13 @@ void Robot::RobotInit()
 {
   ntBOSS = nt::NetworkTableInstance::GetDefault().GetTable("dashBOSS");
   ConfigMotors();
-  if(constants::kUseStickBOSS) m_stickBOSS = new frc::Joystick(0);
-  else m_driveController = new frc::XboxController(0);
+  if(constants::kUseStickBOSS) stickBOSS = new frc::Joystick(0);
+  else stickXbox = new frc::XboxController(0);
   ArmBrake.SetBounds(2.0, 1.8, 1.5, 1.2, 1.0); 
-  m_TurnPID.EnableContinuousInput(-180.0,180.0); //required for swerve
+  frTurnPID.EnableContinuousInput(-180.0,180.0); //required for swerve
+  flTurnPID.EnableContinuousInput(-180.0,180.0); //required for swerve
+  rlTurnPID.EnableContinuousInput(-180.0,180.0); //required for swerve
+  rrTurnPID.EnableContinuousInput(-180.0,180.0); //required for swerve
   try
   {
     ahrs = new AHRS(frc::SPI::Port::kMXP);
@@ -92,7 +95,7 @@ void Robot::RobotPeriodic()
     ntBOSS->PutNumber("RL_DIST", rlSwerve.driveOUT);
     ntBOSS->PutNumber("RR_DIR",rrSwerve.turnPV);
     ntBOSS->PutNumber("RR_DIST", rrSwerve.driveOUT);
-    ntBOSS->PutNumber("Winch",fabs(m_winch1.GetSelectedSensorPosition())/constants::kWinchCountsPerInch);
+    ntBOSS->PutNumber("Winch",fabs(can_winch1.GetSelectedSensorPosition())/constants::kWinchCountsPerInch);
     //ntBOSS->PutNumber("joy_FORWARD", forward);
     //ntBOSS->PutNumber("joy_STRAFE", strafe);
     //ntBOSS->PutNumber("joy_ROTATE", rotate);
@@ -139,17 +142,17 @@ void Robot::TeleopPeriodic()
   //xbox
   if(constants::kUseStickBOSS)
   {
-    forward = -(m_stickBOSS->GetRawAxis(1));
-    strafe =  m_stickBOSS->GetRawAxis(0);
-    rotate = m_stickBOSS->GetRawAxis(3);
-    button1_Pressed = m_stickBOSS->GetRawButtonPressed(1);
+    forward = -(stickBOSS->GetRawAxis(1));
+    strafe =  stickBOSS->GetRawAxis(0);
+    rotate = stickBOSS->GetRawAxis(3);
+    button1_Pressed = stickBOSS->GetRawButtonPressed(1);
   }
   else
   {
-    forward = -(m_driveController->GetRightY());
-    strafe =  m_driveController->GetRightX();
-    rotate = m_driveController->GetLeftX();
-    button1_Pressed = m_driveController->GetRawButtonPressed(1);
+    forward = -(stickXbox->GetRightY());
+    strafe =  stickXbox->GetRightX();
+    rotate = stickXbox->GetLeftX();
+    button1_Pressed = stickXbox->GetRawButtonPressed(1);
   }
   
   if(fabs(forward)<.15) {forward = 0;}

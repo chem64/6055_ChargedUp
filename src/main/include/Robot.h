@@ -47,8 +47,8 @@ class Robot : public frc::TimedRobot {
 
   private:
 
-    frc::XboxController *m_driveController;
-    frc::Joystick *m_stickBOSS;
+    frc::XboxController *stickXbox;
+    frc::Joystick *stickBOSS;
     std::shared_ptr<nt::NetworkTable> ntBOSS;
     AHRS *ahrs;
     double HeadingOffset = 0;
@@ -56,23 +56,23 @@ class Robot : public frc::TimedRobot {
     bool SwerveOrientationToField = false;
     
     //CAN Devices
-    WPI_TalonFX m_frTurn{constants::kFrontRightTurn_ID};
-    WPI_TalonFX m_frDrive{constants::kFrontRightDrive_ID};
-    WPI_CANCoder m_frEncoder{constants::kFrontRightEncoder_ID};
+    WPI_TalonFX can_frTurn{constants::kFrontRightTurn_ID};
+    WPI_TalonFX can_frDrive{constants::kFrontRightDrive_ID};
+    WPI_CANCoder can_frEncoder{constants::kFrontRightEncoder_ID};
 
-    WPI_TalonFX m_flTurn{constants::kFrontLeftTurn_ID};
-    WPI_TalonFX m_flDrive{constants::kFrontLeftDrive_ID};
-    WPI_CANCoder m_flEncoder{constants::kFrontLeftEncoder_ID};
+    WPI_TalonFX can_flTurn{constants::kFrontLeftTurn_ID};
+    WPI_TalonFX can_flDrive{constants::kFrontLeftDrive_ID};
+    WPI_CANCoder can_flEncoder{constants::kFrontLeftEncoder_ID};
     
-    WPI_TalonFX m_rlTurn{constants::kRearLeftTurn_ID};
-    WPI_TalonFX m_rlDrive{constants::kRearLeftDrive_ID};
-    WPI_CANCoder m_rlEncoder{constants::kRearLeftEncoder_ID};
+    WPI_TalonFX can_rlTurn{constants::kRearLeftTurn_ID};
+    WPI_TalonFX can_rlDrive{constants::kRearLeftDrive_ID};
+    WPI_CANCoder can_rlEncoder{constants::kRearLeftEncoder_ID};
     
-    WPI_TalonFX m_rrTurn{constants::kRearRightTurn_ID};
-    WPI_TalonFX m_rrDrive{constants::kRearRightDrive_ID};
-    WPI_CANCoder m_rrEncoder{constants::kRearRightEncoder_ID};
+    WPI_TalonFX can_rrTurn{constants::kRearRightTurn_ID};
+    WPI_TalonFX can_rrDrive{constants::kRearRightDrive_ID};
+    WPI_CANCoder can_rrEncoder{constants::kRearRightEncoder_ID};
 
-    WPI_TalonSRX m_winch1{constants::kWinch1_ID};
+    WPI_TalonSRX can_winch1{constants::kWinch1_ID};
 
     frc::Servo ArmBrake{0};         
 
@@ -93,7 +93,10 @@ class Robot : public frc::TimedRobot {
     SwerveType rlSwerve;
     SwerveType rrSwerve;
     
-    frc2::PIDController m_TurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
+    frc2::PIDController frTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
+    frc2::PIDController flTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
+    frc2::PIDController rlTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
+    frc2::PIDController rrTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
     frc::SlewRateLimiter<units::scalar> spdFilter{2/1_s};
        
     double forward;
