@@ -4,6 +4,7 @@
 #include <frc/XboxController.h>
 #include <frc/Joystick.h>
 #include <ctre/Phoenix.h>
+#include "frc/DriverStation.h"
 #include "networktables/NetworkTable.h"
 #include "networktables/NetworkTableInstance.h"
 #include "Constants.h"
@@ -49,6 +50,7 @@ class Robot : public frc::TimedRobot {
 
     frc::XboxController *stickXbox;
     frc::Joystick *stickBOSS;
+    frc::Joystick *stickPlayer;
     std::shared_ptr<nt::NetworkTable> ntBOSS;
     AHRS *ahrs;
     double HeadingOffset = 0;
@@ -73,6 +75,10 @@ class Robot : public frc::TimedRobot {
     WPI_CANCoder can_rrEncoder{constants::kRearRightEncoder_ID};
 
     WPI_TalonSRX can_winch1{constants::kWinch1_ID};
+    WPI_TalonSRX can_winch2{constants::kWinch2_ID};
+    WPI_TalonSRX can_intake{constants::kIntake_ID};
+
+    WPI_TalonFX can_arm{constants::kArm_ID};
 
     frc::Servo ArmBrake{0};         
 
@@ -107,6 +113,7 @@ class Robot : public frc::TimedRobot {
     StatorCurrentLimitConfiguration driveStatorSCLC;
     SupplyCurrentLimitConfiguration turnSCLC;
     StatorCurrentLimitConfiguration turnStatorSCLC; 
+    SupplyCurrentLimitConfiguration armSCLC;
 
     //Auto
     int AutoState = 0;

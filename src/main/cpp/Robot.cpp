@@ -4,8 +4,12 @@ void Robot::RobotInit()
 {
   ntBOSS = nt::NetworkTableInstance::GetDefault().GetTable("dashBOSS");
   ConfigMotors();
+  //turn off warnings for joysticks not connected
+  frc::DriverStation::SilenceJoystickConnectionWarning(constants::kSilenceJoystickWarnings);
+
   if(constants::kUseStickBOSS) stickBOSS = new frc::Joystick(0);
   else stickXbox = new frc::XboxController(0);
+  stickPlayer = new frc::Joystick(1);
   ArmBrake.SetBounds(2.0, 1.8, 1.5, 1.2, 1.0); 
   frTurnPID.EnableContinuousInput(-180.0,180.0); //required for swerve
   flTurnPID.EnableContinuousInput(-180.0,180.0); //required for swerve
@@ -96,6 +100,7 @@ void Robot::RobotPeriodic()
     ntBOSS->PutNumber("RR_DIR",rrSwerve.turnPV);
     ntBOSS->PutNumber("RR_DIST", rrSwerve.driveOUT);
     ntBOSS->PutNumber("Winch",fabs(can_winch1.GetSelectedSensorPosition())/constants::kWinchCountsPerInch);
+    ntBOSS->PutNumber("Arm",can_arm.GetSelectedSensorPosition());
     //ntBOSS->PutNumber("joy_FORWARD", forward);
     //ntBOSS->PutNumber("joy_STRAFE", strafe);
     //ntBOSS->PutNumber("joy_ROTATE", rotate);
@@ -139,7 +144,6 @@ void Robot::TeleopInit()
 void Robot::TeleopPeriodic() 
 {
   bool button1_Pressed;
-  //xbox
   if(constants::kUseStickBOSS)
   {
     forward = -(stickBOSS->GetRawAxis(1));
@@ -165,6 +169,27 @@ void Robot::TeleopPeriodic()
 
   //toggle robot/field orientation for swerve drive
   if(button1_Pressed) {SwerveOrientationToField = !SwerveOrientationToField;}
+
+  //test rotating arm
+  double playerY = stickPlayer->GetRawAxis(1);
+  if(fabs(playerY) < 0.15) playerY = 0.0;
+  //need to set limits first !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  //can_arm.Set(ControlMode::PercentOutput,-(playerY/3.0));
+
+  /*//handle rotating arm
+  ArmRot_Setpoint = clamp2(ArmRot_Setpoint,constants::climber::kArmRot_ReverseLimit,constants::climber::kArmRot_ForwardLimit);
+  //MotorArmRot1_Rotate->Set(ControlMode::MotionMagic,ArmRot_Setpoint);
+  double scalar = (100.0 - (constants::climber::kArmRot_ForwardLimit - ArmRot_Setpoint))/100.0;  //multiplier = 1 @ 343 and 0 @ 242
+  MotorArmRot1_Rotate->Set(ControlMode::MotionMagic,ArmRot_Setpoint,DemandType::DemandType_ArbitraryFeedForward,constants::climber::kArmRot_AFF * scalar);
+  
+  ArmExt_Setpoint = clamp2(ArmExt_Setpoint,constants::climber::kArmExt_RetractLimit,constants::climber::kArmExt_ExtendLimit);
+  MotorArmRot1_Extend->Set(ControlMode::MotionMagic,ArmExt_Setpoint);
+  MotorArmRot2_Extend->Set(ControlMode::MotionMagic,ArmExt_Setpoint);*/
+
+  //handle intake wheel rotation
+  bool player_button1_Pressed = stickPlayer->GetRawButtonPressed(1);
+  if(player_button1_Pressed) can_intake.Set(ControlMode::PercentOutput,constants::kIntakeSpeed);
+  else can_intake.Set(ControlMode::PercentOutput,0.0);
 }
 
 void Robot::DisabledInit() 

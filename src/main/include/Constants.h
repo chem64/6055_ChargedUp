@@ -4,6 +4,7 @@
 namespace constants
 {
   constexpr bool kUseStickBOSS = false;
+  constexpr bool kSilenceJoystickWarnings = true;
   constexpr double kSwerveAngleBreak = 90;
   constexpr double kSwerveDriveSpeedFilter = 2.0;  //smaller is more filtering (slower to reach top speed) - will bypass filter when joystick released
 
@@ -34,6 +35,8 @@ namespace constants
   constexpr int kWinch1_ID = 17;  //1ft = -12150  2ft = -24296
   constexpr int kWinch2_ID = 18;
   constexpr int kWinchCountsPerInch = 1012.4;
+  constexpr int kIntake_ID = 22;
+  constexpr int kArm_ID = 23;
 
   constexpr double kEncoderCountsPerDegree = 4096.0 / 360.0;
 
@@ -97,6 +100,30 @@ namespace constants
   constexpr double kPeakCurrentLimit = 20.0;
   constexpr double kPeakCurrentDuration = 25; //msecs
   constexpr double kVoltageCompSaturation = 12.0;
+
+  constexpr double kOpenLoopRamp = 1.0;
+
+  constexpr double kArmContinuousCurrentLimit = 20.0;
+  constexpr double kArmSupplyCurrentLimit = 20.0;
+  constexpr double kArmPeakCurrentLimit = 25.0;
+  constexpr double kArmPeakCurrentDuration = 25; //msecs
+  constexpr double kArmVoltageCompSaturation = 12.0;
+
+  constexpr double kArm_F = 0.015;    //FeedForward
+  constexpr double kArm_P = 0.05;     //Proportional Gain
+  constexpr double kArm_I = 0.005;     //Integral Gain
+  constexpr double kArm_D = 0.0;    //Derivative Gain 
+  constexpr double kArm_AFF = 0.0;  //arbitrary FeedForward to account for gravity on the arm
+  constexpr double kArm_MotionCruiseVelocity =50000;
+  constexpr double kArm_MotionAcceleration = 100000;
+  constexpr double kArm_MotionSCurveStrength = 5;
+  
+  constexpr double kArm_ForwardLimit = 592;   //max forward movement - should be forward stop
+  constexpr double kArm_ReverseLimit = 492;   //min reverse movement - should be reverse stop
+  constexpr double kArm_Range = kArm_ForwardLimit - kArm_ReverseLimit;
+  constexpr double kArm_AllowableError = 0.03 * kArm_Range;   //deadband around target for position control      
+
+  constexpr double kIntakeSpeed = -1.0;
   
   //auto profile - drive wheel position - convert Feet to position units (encoder count)
   constexpr double kDriveCPR = 2048;
