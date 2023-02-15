@@ -187,9 +187,35 @@ void Robot::TeleopPeriodic()
   MotorArmRot2_Extend->Set(ControlMode::MotionMagic,ArmExt_Setpoint);*/
 
   //handle intake wheel rotation
-  bool player_button1_Pressed = stickPlayer->GetRawButtonPressed(1);
-  if(player_button1_Pressed) can_intake.Set(ControlMode::PercentOutput,constants::kIntakeSpeed);
-  else can_intake.Set(ControlMode::PercentOutput,0.0);
+  double player_axis3 = stickPlayer->GetRawAxis(3);
+  double intake_speed = 0.0;
+  if(player_axis3 < -0.75) intake_speed = -constants::kIntakeSpeed;
+  if(player_axis3 > 0.75) intake_speed = constants::kIntakeSpeed;
+  can_intake.Set(ControlMode::PercentOutput,intake_speed);
+
+  //handle wrist
+  bool player_button4 = stickPlayer->GetRawButtonPressed(4); //left top button
+  bool player_button1 = stickPlayer->GetRawButtonPressed(1); //trigger
+  bool player_button5 = stickPlayer->GetRawButtonPressed(5); //right top button
+  if(player_button1 && !player_button4 && !player_button5) 
+  {
+    if(Wrist_POS == 1) Wrist_SP += constants::kWristRotateCounts;
+    if(Wrist_POS == 2) Wrist_SP -= constants::kWristRotateCounts;
+    Wrist_POS = 0;
+  }
+  if(!player_button1 && player_button4 && !player_button5) 
+  {
+    if(Wrist_POS == 0) Wrist_SP -= constants::kWristRotateCounts;
+    if(Wrist_POS == 2) Wrist_SP -= constants::kWristRotateCounts * 2;
+    Wrist_POS = 1;
+  }
+  if(!player_button1 && !player_button4 && player_button5) 
+  {
+    if(Wrist_POS == 1) Wrist_SP += constants::kWristRotateCounts * 2;
+    if(Wrist_POS == 0) Wrist_SP += constants::kWristRotateCounts;
+    Wrist_POS = 2;
+  }
+  can_wrist.Set(ControlMode::MotionMagic,Wrist_SP);
 }
 
 void Robot::DisabledInit() 

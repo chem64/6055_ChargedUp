@@ -56,6 +56,8 @@ class Robot : public frc::TimedRobot {
     double HeadingOffset = 0;
     double Heading = 0;
     bool SwerveOrientationToField = false;
+    double Wrist_SP = 0.0;
+    double Wrist_POS = 0;  //0 = 0deg  1 = -90deg   2= 90deg
     
     //CAN Devices
     WPI_TalonFX can_frTurn{constants::kFrontRightTurn_ID};
@@ -76,9 +78,12 @@ class Robot : public frc::TimedRobot {
 
     WPI_TalonSRX can_winch1{constants::kWinch1_ID};
     WPI_TalonSRX can_winch2{constants::kWinch2_ID};
+
     WPI_TalonSRX can_intake{constants::kIntake_ID};
 
     WPI_TalonFX can_arm{constants::kArm_ID};
+
+    WPI_TalonSRX can_wrist{constants::kWrist_ID};
 
     frc::Servo ArmBrake{0};         
 

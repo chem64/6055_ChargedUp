@@ -37,6 +37,7 @@ namespace constants
   constexpr int kWinchCountsPerInch = 1012.4;
   constexpr int kIntake_ID = 22;
   constexpr int kArm_ID = 23;
+  constexpr int kWrist_ID = 24;
 
   constexpr double kEncoderCountsPerDegree = 4096.0 / 360.0;
 
@@ -123,7 +124,22 @@ namespace constants
   constexpr double kArm_Range = kArm_ForwardLimit - kArm_ReverseLimit;
   constexpr double kArm_AllowableError = 0.03 * kArm_Range;   //deadband around target for position control      
 
-  constexpr double kIntakeSpeed = -1.0;
+  constexpr double kWrist_F = 0.2;     //FeedForward
+  constexpr double kWrist_P = 0.5;     //Proportional Gain
+  constexpr double kWrist_I = 0.0;   //Integral Gain
+  constexpr double kWrist_D = 0.0;     //Derivative Gain 
+  constexpr double kWrist_MotionCruiseVelocity = 5000;
+  constexpr double kWrist_MotionAcceleration = 10000;
+  constexpr double kWrist_MotionSCurveStrength = 5;
+
+  constexpr double kWristCPR = 4096;
+  constexpr double kWristGearRatio = 3.33;
+  constexpr double kWristCountsPerRevolution = kWristCPR * kWristGearRatio; 
+  constexpr double kWristDegreesToUnits = (kWristCPR * kWristGearRatio) / 360;
+  constexpr double kWristUnitsToDegrees = 1 / kWristDegreesToUnits;
+  constexpr double kWristRotateCounts = kWristCountsPerRevolution / 4;
+        
+  constexpr double kIntakeSpeed = 1.0;
   
   //auto profile - drive wheel position - convert Feet to position units (encoder count)
   constexpr double kDriveCPR = 2048;
