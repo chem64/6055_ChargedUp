@@ -3,7 +3,7 @@
 
 namespace constants
 {
-  constexpr bool kUseStickBOSS = false;
+  constexpr bool kUseStickBOSS = true;
   constexpr bool kSilenceJoystickWarnings = true;
   constexpr double kSwerveAngleBreak = 90;
   constexpr double kSwerveDriveSpeedFilter = 2.0;  //smaller is more filtering (slower to reach top speed) - will bypass filter when joystick released
@@ -13,24 +13,24 @@ namespace constants
   constexpr double kRadtoDeg = 57.2957795;
   constexpr double kDeg2Rad = 0.017453292519943295;
 
-  constexpr double kWheelbase = 30.0;
-  constexpr double kWheelwidth = 30.0;
+  constexpr double kWheelbase = 29.5;
+  constexpr double kWheelwidth = 16.5;
 
-  constexpr int kFrontLeftTurn_ID = 6;
-  constexpr int kFrontLeftDrive_ID = 5;
-  constexpr int kFrontLeftEncoder_ID = 16;
+  constexpr int kFrontLeftTurn_ID = 19;
+  constexpr int kFrontLeftDrive_ID = 20;
+  constexpr int kFrontLeftEncoder_ID = 7;
 
   constexpr int kFrontRightTurn_ID = 9;
   constexpr int kFrontRightDrive_ID = 10;
   constexpr int kFrontRightEncoder_ID = 11;
 
-  constexpr int kRearLeftTurn_ID = 14;
-  constexpr int kRearLeftDrive_ID = 15;
-  constexpr int kRearLeftEncoder_ID = 21;
+  constexpr int kRearLeftTurn_ID = 36;
+  constexpr int kRearLeftDrive_ID = 35;
+  constexpr int kRearLeftEncoder_ID = 46;
 
-  constexpr int kRearRightTurn_ID = 19;
-  constexpr int kRearRightDrive_ID = 20;
-  constexpr int kRearRightEncoder_ID = 7;
+  constexpr int kRearRightTurn_ID = 44;
+  constexpr int kRearRightDrive_ID = 45;
+  constexpr int kRearRightEncoder_ID = 51;
 
   constexpr int kWinch1_ID = 17;  //1ft = -12150  2ft = -24296
   constexpr int kWinch2_ID = 18;
@@ -42,10 +42,10 @@ namespace constants
   constexpr double kEncoderCountsPerDegree = 4096.0 / 360.0;
 
   //read these from cancoder absolute position when cancoder is configured to -180 to 180 range
-  constexpr double kFrontRightOffset = 24.69;
-  constexpr double kFrontLeftOffset = -38.4;
-  constexpr double kRearLeftOffset = -67.2;
-  constexpr double kRearRightOffset = -94.4;
+  constexpr double kFrontRightOffset = 24.6;
+  constexpr double kFrontLeftOffset = 77.25;
+  constexpr double kRearLeftOffset = 54.88;
+  constexpr double kRearRightOffset = 26.1;
 
   constexpr double kTurn_KP = 0.01; 
   constexpr double kTurn_KI = 0;
@@ -90,9 +90,7 @@ namespace constants
   constexpr double kWinch_MotionCruiseVelocity = 60000;
   constexpr double kWinch_MotionAcceleration = 120000;
   constexpr double kWinch_MotionSCurveStrength = 5;
-  constexpr double kWinch_ExtendLimit = 34500; //max possible move in any mode
-  constexpr double kWinch_ExtendCounts = 31150;//extended target in manual mode
-  constexpr double kWinch_RetractCounts = 10;  //retracted target in manual mode
+  constexpr double kWinch_ExtendLimit = -24296; //max possible move in any mode  //1ft = -12150  2ft = -24296
   constexpr double kWinch_RetractLimit = 0;    //min possible move in any mode
   constexpr double kWinch_AllowableError = 20;
 

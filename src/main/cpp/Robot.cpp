@@ -101,6 +101,7 @@ void Robot::RobotPeriodic()
     ntBOSS->PutNumber("RR_DIST", rrSwerve.driveOUT);
     ntBOSS->PutNumber("Winch",fabs(can_winch1.GetSelectedSensorPosition())/constants::kWinchCountsPerInch);
     ntBOSS->PutNumber("Arm",can_arm.GetSelectedSensorPosition());
+    ntBOSS->PutNumber("Wrist",can_wrist.GetSelectedSensorPosition());
     //ntBOSS->PutNumber("joy_FORWARD", forward);
     //ntBOSS->PutNumber("joy_STRAFE", strafe);
     //ntBOSS->PutNumber("joy_ROTATE", rotate);
@@ -146,7 +147,7 @@ void Robot::TeleopPeriodic()
   bool button1_Pressed;
   if(constants::kUseStickBOSS)
   {
-    forward = -(stickBOSS->GetRawAxis(1));
+    forward = stickBOSS->GetRawAxis(1);
     strafe =  stickBOSS->GetRawAxis(0);
     rotate = stickBOSS->GetRawAxis(3);
     button1_Pressed = stickBOSS->GetRawButtonPressed(1);
@@ -216,6 +217,14 @@ void Robot::TeleopPeriodic()
     Wrist_POS = 2;
   }
   can_wrist.Set(ControlMode::MotionMagic,Wrist_SP);
+
+  //handle winch
+  double player_axis2 = stickPlayer->GetRawAxis(2) / 2;
+  /*double winch_SP = std::clamp(winch_SP,constants::kWinch_RetractLimit,constants::kWinch_ExtendLimit);
+  can_winch1.Set(ControlMode::MotionMagic,winch_SP);
+  can_winch2.Set(ControlMode::MotionMagic,winch_SP);*/
+  can_winch1.Set(ControlMode::PercentOutput,player_axis2);
+  can_winch2.Set(ControlMode::PercentOutput,player_axis2);
 }
 
 void Robot::DisabledInit() 
@@ -243,8 +252,6 @@ void Robot::TestPeriodic()
   if(m_driveController.GetRawButtonPressed(1)) BrakeOn = !BrakeOn;
   if(BrakeOn) ArmBrake.SetPosition(0.0);  //retracted in
   if(!BrakeOn) ArmBrake.SetPosition(1.0); //extended out */
-
-
 }
 
 double Robot::GetHeading()
