@@ -11,6 +11,10 @@ void Robot::RobotInit()
   else stickXbox = new frc::XboxController(0);
   stickPlayer = new frc::Joystick(1);
   ArmBrake.SetBounds(2.0, 1.8, 1.5, 1.2, 1.0); 
+  frSwerve.name = "FR";
+  flSwerve.name = "FL";
+  rlSwerve.name = "RL";
+  rrSwerve.name = "RR";
   frTurnPID.EnableContinuousInput(-180.0,180.0); //required for swerve
   flTurnPID.EnableContinuousInput(-180.0,180.0); //required for swerve
   rlTurnPID.EnableContinuousInput(-180.0,180.0); //required for swerve

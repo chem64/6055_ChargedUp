@@ -29,6 +29,14 @@ double Robot::GetEffectiveAngle(double actAngle,double flip)
   return ret;
 }
 
+void Robot::CheckAngles(SwerveType st)
+{
+  if(fabs(st.turnSP - st.turnPV) > 90.)
+  {
+    printf("%s: sp=%.1f pv=%.1f act=%.1f flip=%.1f out=%.1f\n",st.name,st.turnSP,st.turnPV,st.actAngle,st.flip,st.turnOUT);
+  }
+};
+
 void Robot::DriveSwerve(double FWD, double STR, double RCW)
 {
  
@@ -94,10 +102,12 @@ void Robot::DriveSwerve(double FWD, double STR, double RCW)
   if (CheckWrap(fabs(frSwerve.turnSP - frSwerve.turnPV)) > constants::kSwerveAngleBreak)
   {
     frSwerve.flip *= -1.0;
-    frSwerve.turnPV = GetEffectiveAngle(frSwerve.actAngle,frSwerve.flip);
+    //frSwerve.turnPV = GetEffectiveAngle(frSwerve.actAngle,frSwerve.flip);
+    (frSwerve.turnPV<=0.0)?frSwerve.turnPV+=180.0:frSwerve.turnPV-=180.0;
   }
   //calculate PID based on effective angle and setpoint
   frSwerve.turnOUT = std::clamp(frTurnPID.Calculate(frSwerve.turnPV,frSwerve.turnSP),-1.0,1.0);
+  CheckAngles(frSwerve);
   can_frTurn.Set(ControlMode::PercentOutput,frSwerve.turnOUT);
   frSwerve.driveOUT = ws1 * frSwerve.flip;
   can_frDrive.Set(ControlMode::PercentOutput,frSwerve.driveOUT);
@@ -109,10 +119,12 @@ void Robot::DriveSwerve(double FWD, double STR, double RCW)
   if (CheckWrap(fabs(flSwerve.turnSP - flSwerve.turnPV)) > constants::kSwerveAngleBreak)
   {
     flSwerve.flip *= -1.0;
-    flSwerve.turnPV = GetEffectiveAngle(flSwerve.actAngle,flSwerve.flip);
+    //flSwerve.turnPV = GetEffectiveAngle(flSwerve.actAngle,flSwerve.flip);
+    (flSwerve.turnPV<=0.0)?flSwerve.turnPV+=180.0:flSwerve.turnPV-=180.0;
   }
   //calculate PID based on effective angle and setpoint
   flSwerve.turnOUT = std::clamp(flTurnPID.Calculate(flSwerve.turnPV,flSwerve.turnSP),-1.0,1.0);
+  CheckAngles(flSwerve);
   can_flTurn.Set(ControlMode::PercentOutput,flSwerve.turnOUT);
   flSwerve.driveOUT = ws2 * flSwerve.flip;
   can_flDrive.Set(ControlMode::PercentOutput,flSwerve.driveOUT);
@@ -124,10 +136,12 @@ void Robot::DriveSwerve(double FWD, double STR, double RCW)
   if (CheckWrap(fabs(rlSwerve.turnSP - rlSwerve.turnPV)) > constants::kSwerveAngleBreak)
   {
     rlSwerve.flip *= -1.0;
-    rlSwerve.turnPV = GetEffectiveAngle(rlSwerve.actAngle,rlSwerve.flip);
+    //rlSwerve.turnPV = GetEffectiveAngle(rlSwerve.actAngle,rlSwerve.flip);
+    (rlSwerve.turnPV<=0.0)?rlSwerve.turnPV+=180.0:rlSwerve.turnPV-=180.0;
   }
   //calculate PID based on effective angle and setpoint
   rlSwerve.turnOUT = std::clamp(rlTurnPID.Calculate(rlSwerve.turnPV,rlSwerve.turnSP),-1.0,1.0);
+  CheckAngles(rlSwerve);
   can_rlTurn.Set(ControlMode::PercentOutput,rlSwerve.turnOUT);
   rlSwerve.driveOUT = ws3 * rlSwerve.flip;
   can_rlDrive.Set(ControlMode::PercentOutput,rlSwerve.driveOUT);
@@ -139,10 +153,12 @@ void Robot::DriveSwerve(double FWD, double STR, double RCW)
   if (CheckWrap(fabs(rrSwerve.turnSP - rrSwerve.turnPV)) > constants::kSwerveAngleBreak)
   {
     rrSwerve.flip *= -1.0;
-    rrSwerve.turnPV = GetEffectiveAngle(rrSwerve.actAngle,rrSwerve.flip);
+    //rrSwerve.turnPV = GetEffectiveAngle(rrSwerve.actAngle,rrSwerve.flip);
+    (rrSwerve.turnPV<=0.0)?rrSwerve.turnPV+=180.0:rrSwerve.turnPV-=180.0;
   }
   //calculate PID based on effective angle and setpoint
   rrSwerve.turnOUT = std::clamp(rrTurnPID.Calculate(rrSwerve.turnPV,rrSwerve.turnSP),-1.0,1.0);
+  CheckAngles(rrSwerve);
   can_rrTurn.Set(ControlMode::PercentOutput,rrSwerve.turnOUT);
   rrSwerve.driveOUT = ws4 * rrSwerve.flip;
   can_rrDrive.Set(ControlMode::PercentOutput,rrSwerve.driveOUT);

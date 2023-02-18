@@ -14,10 +14,20 @@
 #include <frc/controller/PIDController.h>
 #include <frc/filter/SlewRateLimiter.h>
 #include <frc/Servo.h>
-#include "pid.h"
 
 class Robot : public frc::TimedRobot {
  public:
+
+ struct SwerveType
+ {
+   std::string name = "";
+   double actAngle = 0.0;  //current encoder position - encoder offset
+   double turnSP = 0.0;    //desired direction from joystick
+   double turnPV = 0.0;    //effective angle - direction wheel is moving
+   double flip = 1.0;      //-1 if drive is reversed, 1 if drive is not reversed
+   double turnOUT = 0.0;   //output to turn motor
+   double driveOUT = 0.0;  //output to drive motor
+ };
   
   void RobotInit() override;
   void RobotPeriodic() override;
@@ -36,6 +46,7 @@ class Robot : public frc::TimedRobot {
 
   double GetHeading();
   double CheckWrap(double pos);
+  void CheckAngles(SwerveType st);
   double GetEffectiveAngle(double actAngle,double flip);
   void DriveSwerve(double FWD, double STR, double RCW);
   void ConfigMotors();
@@ -90,30 +101,15 @@ class Robot : public frc::TimedRobot {
 
     //SWERVE
 
-    struct SwerveType
-    {
-      double actAngle = 0.0;  //current encoder position - encoder offset
-      double turnSP = 0.0;    //desired direction from joystick
-      double turnPV = 0.0;    //effective angle - direction wheel is moving
-      double flip = 1.0;      //-1 if drive is reversed, 1 if drive is not reversed
-      double turnOUT = 0.0;   //output to turn motor
-      double driveOUT = 0.0;  //output to drive motor
-    };
-
     SwerveType frSwerve;
     SwerveType flSwerve;
     SwerveType rlSwerve;
     SwerveType rrSwerve;
     
-    /*frc2::PIDController frTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
+    frc2::PIDController frTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
     frc2::PIDController flTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
     frc2::PIDController rlTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
-    frc2::PIDController rrTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};*/
-    //testing custom pid controller to fix shortest path problems
-    frc2::PIDControllerX frTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
-    frc2::PIDControllerX flTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
-    frc2::PIDControllerX rlTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
-    frc2::PIDControllerX rrTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
+    frc2::PIDController rrTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
     frc::SlewRateLimiter<units::scalar> spdFilter{2/1_s};
        
     double forward;
