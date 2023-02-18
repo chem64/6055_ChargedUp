@@ -14,6 +14,7 @@
 #include <frc/controller/PIDController.h>
 #include <frc/filter/SlewRateLimiter.h>
 #include <frc/Servo.h>
+#include "pid.h"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -104,10 +105,15 @@ class Robot : public frc::TimedRobot {
     SwerveType rlSwerve;
     SwerveType rrSwerve;
     
-    frc2::PIDController frTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
+    /*frc2::PIDController frTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
     frc2::PIDController flTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
     frc2::PIDController rlTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
-    frc2::PIDController rrTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
+    frc2::PIDController rrTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};*/
+    //testing custom pid controller to fix shortest path problems
+    frc2::PIDControllerX frTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
+    frc2::PIDControllerX flTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
+    frc2::PIDControllerX rlTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
+    frc2::PIDControllerX rrTurnPID{constants::kTurn_KP, constants::kTurn_KI, constants::kTurn_KD};
     frc::SlewRateLimiter<units::scalar> spdFilter{2/1_s};
        
     double forward;
@@ -137,5 +143,4 @@ class Robot : public frc::TimedRobot {
     bool MatchStart = false;
     int dAutoSelect = 0;
     int CurMode = 0;
-
   };

@@ -31,7 +31,7 @@ void Robot::ConfigMotors()
   can_frDrive.ConfigStatorCurrentLimit(driveStatorSCLC);//CURRENT_LIMITING
   can_frDrive.SetStatusFramePeriod(StatusFrameEnhanced::Status_13_Base_PIDF0, 10, 10);
   can_frDrive.SetStatusFramePeriod(StatusFrameEnhanced::Status_10_MotionMagic, 10, 10);
-  can_frDrive.ConfigVoltageCompSaturation(constants::kDriveVoltageCompSaturation);
+  can_frDrive.ConfigVoltageCompSaturation(constants::kDriveVoltageCompSaturation,kTimeoutMs);
   can_frDrive.EnableVoltageCompensation(true);
   can_frDrive.SetSafetyEnabled(false);
 
@@ -55,7 +55,7 @@ void Robot::ConfigMotors()
   can_flDrive.ConfigStatorCurrentLimit(driveStatorSCLC);//CURRENT_LIMITING
   can_flDrive.SetStatusFramePeriod(StatusFrameEnhanced::Status_13_Base_PIDF0, 10, 10);
   can_flDrive.SetStatusFramePeriod(StatusFrameEnhanced::Status_10_MotionMagic, 10, 10);
-  can_flDrive.ConfigVoltageCompSaturation(constants::kDriveVoltageCompSaturation);
+  can_flDrive.ConfigVoltageCompSaturation(constants::kDriveVoltageCompSaturation,kTimeoutMs);
   can_flDrive.EnableVoltageCompensation(true);
   can_flDrive.SetSafetyEnabled(false);
 
@@ -79,7 +79,7 @@ void Robot::ConfigMotors()
   can_rlDrive.ConfigStatorCurrentLimit(driveStatorSCLC);//CURRENT_LIMITING
   can_rlDrive.SetStatusFramePeriod(StatusFrameEnhanced::Status_13_Base_PIDF0, 10, 10);
   can_rlDrive.SetStatusFramePeriod(StatusFrameEnhanced::Status_10_MotionMagic, 10, 10);
-  can_rlDrive.ConfigVoltageCompSaturation(constants::kDriveVoltageCompSaturation);
+  can_rlDrive.ConfigVoltageCompSaturation(constants::kDriveVoltageCompSaturation,kTimeoutMs);
   can_rlDrive.EnableVoltageCompensation(true);
   can_rlDrive.SetSafetyEnabled(false);
 
@@ -103,14 +103,14 @@ void Robot::ConfigMotors()
   can_rrDrive.ConfigStatorCurrentLimit(driveStatorSCLC);//CURRENT_LIMITING
   can_rrDrive.SetStatusFramePeriod(StatusFrameEnhanced::Status_13_Base_PIDF0, 10, 10);
   can_rrDrive.SetStatusFramePeriod(StatusFrameEnhanced::Status_10_MotionMagic, 10, 10);
-  can_rrDrive.ConfigVoltageCompSaturation(constants::kDriveVoltageCompSaturation);
+  can_rrDrive.ConfigVoltageCompSaturation(constants::kDriveVoltageCompSaturation,kTimeoutMs);
   can_rrDrive.EnableVoltageCompensation(true);
   can_rrDrive.SetSafetyEnabled(false);
 
   can_frEncoder.ConfigFactoryDefault();
   can_frEncoder.ConfigSensorDirection(true,10);
-  can_frEncoder.ConfigSensorInitializationStrategy(SensorInitializationStrategy::BootToAbsolutePosition);
-  can_frEncoder.ConfigAbsoluteSensorRange(AbsoluteSensorRange::Signed_PlusMinus180);
+  can_frEncoder.ConfigSensorInitializationStrategy(SensorInitializationStrategy::BootToAbsolutePosition,kTimeoutMs);
+  can_frEncoder.ConfigAbsoluteSensorRange(AbsoluteSensorRange::Signed_PlusMinus180,kTimeoutMs);
   can_frEncoder.SetStatusFramePeriod(ctre::phoenix::sensors::CANCoderStatusFrame::CANCoderStatusFrame_SensorData, 20,10);
   
   can_frTurn.ConfigFactoryDefault();
@@ -128,8 +128,8 @@ void Robot::ConfigMotors()
   
   can_flEncoder.ConfigFactoryDefault();
   can_flEncoder.ConfigSensorDirection(true,10);
-  can_flEncoder.ConfigSensorInitializationStrategy(SensorInitializationStrategy::BootToAbsolutePosition);
-  can_flEncoder.ConfigAbsoluteSensorRange(AbsoluteSensorRange::Signed_PlusMinus180);
+  can_flEncoder.ConfigSensorInitializationStrategy(SensorInitializationStrategy::BootToAbsolutePosition,kTimeoutMs);
+  can_flEncoder.ConfigAbsoluteSensorRange(AbsoluteSensorRange::Signed_PlusMinus180,kTimeoutMs);
   can_flEncoder.SetStatusFramePeriod(ctre::phoenix::sensors::CANCoderStatusFrame::CANCoderStatusFrame_SensorData, 20,10);
   
   can_flTurn.ConfigFactoryDefault();
@@ -147,8 +147,8 @@ void Robot::ConfigMotors()
 
   can_rlEncoder.ConfigFactoryDefault();
   can_rlEncoder.ConfigSensorDirection(true,10);
-  can_rlEncoder.ConfigSensorInitializationStrategy(SensorInitializationStrategy::BootToAbsolutePosition);
-  can_rlEncoder.ConfigAbsoluteSensorRange(AbsoluteSensorRange::Signed_PlusMinus180);
+  can_rlEncoder.ConfigSensorInitializationStrategy(SensorInitializationStrategy::BootToAbsolutePosition,kTimeoutMs);
+  can_rlEncoder.ConfigAbsoluteSensorRange(AbsoluteSensorRange::Signed_PlusMinus180,kTimeoutMs);
   can_rlEncoder.SetStatusFramePeriod(ctre::phoenix::sensors::CANCoderStatusFrame::CANCoderStatusFrame_SensorData, 20,10);
   
   can_rlTurn.ConfigFactoryDefault();
@@ -166,8 +166,8 @@ void Robot::ConfigMotors()
 
   can_rrEncoder.ConfigFactoryDefault();
   can_rrEncoder.ConfigSensorDirection(true,10);
-  can_rrEncoder.ConfigSensorInitializationStrategy(SensorInitializationStrategy::BootToAbsolutePosition);
-  can_rrEncoder.ConfigAbsoluteSensorRange(AbsoluteSensorRange::Signed_PlusMinus180);
+  can_rrEncoder.ConfigSensorInitializationStrategy(SensorInitializationStrategy::BootToAbsolutePosition,kTimeoutMs);
+  can_rrEncoder.ConfigAbsoluteSensorRange(AbsoluteSensorRange::Signed_PlusMinus180,kTimeoutMs);
   can_rrEncoder.SetStatusFramePeriod(ctre::phoenix::sensors::CANCoderStatusFrame::CANCoderStatusFrame_SensorData, 20,10);
   
   can_rrTurn.ConfigFactoryDefault();

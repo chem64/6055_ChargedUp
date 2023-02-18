@@ -70,6 +70,16 @@ void Robot::DriveSwerve(double FWD, double STR, double RCW)
   if (ws4 > max)max = ws4;
   if (max > 1) { ws1 /= max; ws2 /= max; ws3 /= max; ws4 /= max; }
 
+  //Get wheel angles
+  frSwerve.actAngle = CheckWrap(can_frEncoder.GetPosition()-constants::kFrontRightOffset);  //cancoder position accumulates on every turn - does not automatically wrap
+  frSwerve.turnPV = GetEffectiveAngle(frSwerve.actAngle,frSwerve.flip);
+  flSwerve.actAngle = CheckWrap(can_flEncoder.GetPosition()-constants::kFrontLeftOffset);  //cancoder position accumulates on every turn - does not automatically wrap
+  flSwerve.turnPV = GetEffectiveAngle(flSwerve.actAngle,flSwerve.flip);
+  rlSwerve.actAngle = CheckWrap(can_rlEncoder.GetPosition()-constants::kRearLeftOffset);  //cancoder position accumulates on every turn - does not automatically wrap
+  rlSwerve.turnPV = GetEffectiveAngle(rlSwerve.actAngle,rlSwerve.flip);
+  rrSwerve.actAngle = CheckWrap(can_rrEncoder.GetPosition()-constants::kRearRightOffset);  //cancoder position accumulates on every turn - does not automatically wrap
+  rrSwerve.turnPV = GetEffectiveAngle(rrSwerve.actAngle,rrSwerve.flip);
+  
   //if no joystick input - return without changing angles
   if (FWD == 0 && STR == 0 && RCW == 0)
   {
@@ -80,10 +90,6 @@ void Robot::DriveSwerve(double FWD, double STR, double RCW)
   //Front Right
   //set setpoint to joystick
   frSwerve.turnSP = wa1;
-  //actual angle is where encoder is pointing
-  frSwerve.actAngle = CheckWrap(can_frEncoder.GetPosition()-constants::kFrontRightOffset);  //cancoder position accumulates on every turn - does not automatically wrap
-  //get the effective angle - direction wheel is moving
-  frSwerve.turnPV = GetEffectiveAngle(frSwerve.actAngle,frSwerve.flip);
   //if desired setpoint change is greater than our setting - flip direction of drive
   if (CheckWrap(fabs(frSwerve.turnSP - frSwerve.turnPV)) > constants::kSwerveAngleBreak)
   {
@@ -99,10 +105,6 @@ void Robot::DriveSwerve(double FWD, double STR, double RCW)
   //Front Left
   //set setpoint to joystick
   flSwerve.turnSP = wa2;
-  //actual angle is where encoder is pointing
-  flSwerve.actAngle = CheckWrap(can_flEncoder.GetPosition()-constants::kFrontLeftOffset);  //cancoder position accumulates on every turn - does not automatically wrap
-  //get the effective angle - direction wheel is moving
-  flSwerve.turnPV = GetEffectiveAngle(flSwerve.actAngle,flSwerve.flip);
   //if desired setpoint change is greater than our setting - flip direction of drive
   if (CheckWrap(fabs(flSwerve.turnSP - flSwerve.turnPV)) > constants::kSwerveAngleBreak)
   {
@@ -118,10 +120,6 @@ void Robot::DriveSwerve(double FWD, double STR, double RCW)
   //Rear Left
   //set setpoint to joystick
   rlSwerve.turnSP = wa3;
-  //actual angle is where encoder is pointing
-  rlSwerve.actAngle = CheckWrap(can_rlEncoder.GetPosition()-constants::kRearLeftOffset);  //cancoder position accumulates on every turn - does not automatically wrap
-  //get the effective angle - direction wheel is moving
-  rlSwerve.turnPV = GetEffectiveAngle(rlSwerve.actAngle,rlSwerve.flip);
   //if desired setpoint change is greater than our setting - flip direction of drive
   if (CheckWrap(fabs(rlSwerve.turnSP - rlSwerve.turnPV)) > constants::kSwerveAngleBreak)
   {
@@ -137,10 +135,6 @@ void Robot::DriveSwerve(double FWD, double STR, double RCW)
   //Rear Right
   //set setpoint to joystick
   rrSwerve.turnSP = wa4;
-  //actual angle is where encoder is pointing
-  rrSwerve.actAngle = CheckWrap(can_rrEncoder.GetPosition()-constants::kRearRightOffset);  //cancoder position accumulates on every turn - does not automatically wrap
-  //get the effective angle - direction wheel is moving
-  rrSwerve.turnPV = GetEffectiveAngle(rrSwerve.actAngle,rrSwerve.flip);
   //if desired setpoint change is greater than our setting - flip direction of drive
   if (CheckWrap(fabs(rrSwerve.turnSP - rrSwerve.turnPV)) > constants::kSwerveAngleBreak)
   {
@@ -153,4 +147,9 @@ void Robot::DriveSwerve(double FWD, double STR, double RCW)
   rrSwerve.driveOUT = ws4 * rrSwerve.flip;
   can_rrDrive.Set(ControlMode::PercentOutput,rrSwerve.driveOUT);
 }
+
+
+  
+
+
 
