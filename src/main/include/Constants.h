@@ -4,6 +4,7 @@
 namespace constants
 {
   constexpr bool kUseStickBOSS = true;
+  constexpr bool kDebugValues = true;
   constexpr bool kSilenceJoystickWarnings = true;
   constexpr double kSwerveAngleBreak = 90;
   constexpr double kSwerveDriveSpeedFilter = 2.0;  //smaller is more filtering (slower to reach top speed) - will bypass filter when joystick released
@@ -16,37 +17,36 @@ namespace constants
   constexpr double kWheelbase = 29.5;
   constexpr double kWheelwidth = 16.5;
 
-  constexpr int kFrontLeftTurn_ID = 19;
-  constexpr int kFrontLeftDrive_ID = 20;
-  constexpr int kFrontLeftEncoder_ID = 7;
+  constexpr int kRearRightTurn_ID = 19;
+  constexpr int kRearRightDrive_ID = 20;
+  constexpr int kRearRightEncoder_ID = 7;
 
-  constexpr int kFrontRightTurn_ID = 9;
-  constexpr int kFrontRightDrive_ID = 10;
-  constexpr int kFrontRightEncoder_ID = 11;
+  constexpr int kRearLeftTurn_ID = 9;
+  constexpr int kRearLeftDrive_ID = 10;
+  constexpr int kRearLeftEncoder_ID = 11;
 
-  constexpr int kRearLeftTurn_ID = 36;
-  constexpr int kRearLeftDrive_ID = 35;
-  constexpr int kRearLeftEncoder_ID = 46;
+  constexpr int kFrontRightTurn_ID = 36;
+  constexpr int kFrontRightDrive_ID = 35;
+  constexpr int kFrontRightEncoder_ID = 46;
 
-  constexpr int kRearRightTurn_ID = 44;
-  constexpr int kRearRightDrive_ID = 45;
-  constexpr int kRearRightEncoder_ID = 51;
+  constexpr int kFrontLeftTurn_ID = 44;
+  constexpr int kFrontLeftDrive_ID = 45;
+  constexpr int kFrontLeftEncoder_ID = 51;
 
   constexpr int kWinch1_ID = 17;  //1ft = -12150  2ft = -24296
-  constexpr int kWinch2_ID = 18;
   constexpr int kWinchCountsPerInch = 1012.4;
-  constexpr int kIntake_ID = 22;
+  constexpr int kIntake_ID = 13;
   constexpr int kArm_ID = 23;
-  constexpr int kWrist_ID = 24;
+  constexpr int kWrist_ID = 14;
 
   constexpr double kEncoderCountsPerDegree = 4096.0 / 360.0;
 
   //read these from cancoder absolute position when cancoder is configured to -180 to 180 range
   //make sure on startup that incremental encoder matches absolute encoder
-  constexpr double kFrontRightOffset = 24.6;
-  constexpr double kFrontLeftOffset = 77.25;
-  constexpr double kRearLeftOffset = 54.88;
-  constexpr double kRearRightOffset = 26.1;
+  constexpr double kRearLeftOffset = 22.2;
+  constexpr double kRearRightOffset = 83.25;
+  constexpr double kFrontRightOffset = 50.22;
+  constexpr double kFrontLeftOffset = 21.3;
 
   constexpr double kTurn_KP = 0.01; 
   constexpr double kTurn_KI = 0;
@@ -67,13 +67,13 @@ namespace constants
   constexpr double kTurnVoltageCompSaturation = 12.0;
   constexpr double kTurnClosedLoopRamp = 1.0;
 
-  constexpr double kDrive_kF = 0.015;
+  constexpr double kDrive_kF = 0.015; //0.015;
   constexpr double kDrive_kP = 1.0;
   constexpr double kDrive_kI = 0.001;
   constexpr double kDrive_kD = 0.5;
   constexpr double kDriveOpenLoopRamp = 1.0;
-  constexpr double kDrivePeakOutputForward = 0.3;
-  constexpr double kDrivePeakOutputReverse = -0.3;
+  constexpr double kDrivePeakOutputForward = 0.5;
+  constexpr double kDrivePeakOutputReverse = -0.5;
   //Supply Limiting is to prevent breakers tripping or brownouts
   constexpr double kDriveSupplyCurrentLimit = 30.0; //amps
   constexpr double kDrivePeakCurrentLimit = 35.0; //amps
@@ -84,15 +84,15 @@ namespace constants
   constexpr double kDriveStatorPeakCurrentDuration = 15; //msecs
   constexpr double kDriveVoltageCompSaturation = 12.0;
   
-  constexpr double kWinch_F = 0.9;     //FeedForward
-  constexpr double kWinch_P = 2.3;     //Proportional Gain
+  constexpr double kWinch_F = 0.09; //0.9;     //FeedForward
+  constexpr double kWinch_P = 0.3; //2.3;     //Proportional Gain
   constexpr double kWinch_I = 0.005;   //Integral Gain
   constexpr double kWinch_D = 0.0;     //Derivative Gain 
   constexpr double kWinch_MotionCruiseVelocity = 60000;
   constexpr double kWinch_MotionAcceleration = 120000;
   constexpr double kWinch_MotionSCurveStrength = 5;
-  constexpr double kWinch_ExtendLimit = -24296; //max possible move in any mode  //1ft = -12150  2ft = -24296
-  constexpr double kWinch_RetractLimit = 0;    //min possible move in any mode
+  constexpr double kWinch_RetractLimit = -46250; //max possible move in any mode  //1ft = -12150  2ft = -24296
+  constexpr double kWinch_ExtendLimit = -18750;    //min possible move in any mode
   constexpr double kWinch_AllowableError = 20;
 
   constexpr double kContinuousCurrentLimit = 15.0;
@@ -103,9 +103,9 @@ namespace constants
 
   constexpr double kOpenLoopRamp = 1.0;
 
-  constexpr double kArmContinuousCurrentLimit = 20.0;
-  constexpr double kArmSupplyCurrentLimit = 20.0;
-  constexpr double kArmPeakCurrentLimit = 25.0;
+  constexpr double kArmContinuousCurrentLimit = 30.0;
+  constexpr double kArmSupplyCurrentLimit = 30.0;
+  constexpr double kArmPeakCurrentLimit = 35.0;
   constexpr double kArmPeakCurrentDuration = 25; //msecs
   constexpr double kArmVoltageCompSaturation = 12.0;
 
@@ -118,8 +118,8 @@ namespace constants
   constexpr double kArm_MotionAcceleration = 100000;
   constexpr double kArm_MotionSCurveStrength = 5;
   
-  constexpr double kArm_ForwardLimit = 592;   //max forward movement - should be forward stop
-  constexpr double kArm_ReverseLimit = 492;   //min reverse movement - should be reverse stop
+  constexpr double kArm_ForwardLimit = 263600;   //max forward movement - should be forward stop
+  constexpr double kArm_ReverseLimit = -54766;   //min reverse movement - should be reverse stop
   constexpr double kArm_Range = kArm_ForwardLimit - kArm_ReverseLimit;
   constexpr double kArm_AllowableError = 0.03 * kArm_Range;   //deadband around target for position control      
 
@@ -127,8 +127,8 @@ namespace constants
   constexpr double kWrist_P = 0.5;     //Proportional Gain
   constexpr double kWrist_I = 0.0;   //Integral Gain
   constexpr double kWrist_D = 0.0;     //Derivative Gain 
-  constexpr double kWrist_MotionCruiseVelocity = 5000;
-  constexpr double kWrist_MotionAcceleration = 10000;
+  constexpr double kWrist_MotionCruiseVelocity = 1000;
+  constexpr double kWrist_MotionAcceleration = 500;
   constexpr double kWrist_MotionSCurveStrength = 5;
 
   constexpr double kWristCPR = 4096;

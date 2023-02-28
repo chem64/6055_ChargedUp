@@ -135,3 +135,46 @@ void::Robot::RunAuto_1()
     }
    
 }
+
+//place object, reverse 16.5 ft, stop
+void::Robot::RunAuto_2() 
+{
+    switch(AutoState)
+    {
+        case 0:
+            AutoTimer->Reset();
+            AutoState = 10;
+            ntBOSS->PutString("AutoStatus", "AUTO2_PLACE");
+            //if(constants::kAutoLoggingEnabled) ntBOSS->PutNumber("AutoState", AutoState);
+            break;
+        case 10: //place object
+            if(AutoTimer->AdvanceIfElapsed((units::time::second_t) 1))
+            {
+                AutoState = 20;
+                //if(constants::kAutoLoggingEnabled) ntBOSS->PutNumber("AutoState", AutoState);
+            }
+            break;
+        case 20: //start drive control
+            ntBOSS->PutString("AutoStatus", "AUTO2_REV16");
+            can_flDrive.StartMotionProfile(*AutoRev16_LeftBufStrm, 10, ControlMode::MotionProfile);
+            can_rlDrive.StartMotionProfile(*AutoRev16_LeftBufStrm, 10, ControlMode::MotionProfile);
+            can_frDrive.StartMotionProfile(*AutoRev16_RightBufStrm, 10, ControlMode::MotionProfile);
+            can_rrDrive.StartMotionProfile(*AutoRev16_RightBufStrm, 10, ControlMode::MotionProfile);
+            AutoState = 30;
+            //if(constants::kAutoLoggingEnabled) ntBOSS->PutNumber("AutoState", AutoState);
+            break;
+        case 30: //process drive control
+            //look for end of profile
+            if(!AutoIsRunning())
+            {
+                AutoState = 40;
+                //if(constants::kAutoLoggingEnabled) ntBOSS->PutNumber("AutoState", AutoState);
+            }
+            break;
+        case 40:
+            ntBOSS->PutString("AutoStatus", "AUTO2_DONE");
+            StopAllDrives();
+            break;
+    }
+   
+}

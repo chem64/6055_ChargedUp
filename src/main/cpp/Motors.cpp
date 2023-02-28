@@ -13,7 +13,7 @@ void Robot::ConfigMotors()
 
   can_frDrive.ConfigFactoryDefault(kTimeoutMs);
   can_frDrive.ConfigSelectedFeedbackSensor(FeedbackDevice::IntegratedSensor, 0, kTimeoutMs);
-  can_frDrive.SetInverted(true);
+  can_frDrive.SetInverted(false);
   can_frDrive.ConfigNeutralDeadband(0.04, kTimeoutMs);
   can_frDrive.SetNeutralMode(NeutralMode::Brake);
   can_frDrive.ConfigNominalOutputForward(0, kTimeoutMs);
@@ -37,7 +37,7 @@ void Robot::ConfigMotors()
 
   can_flDrive.ConfigFactoryDefault(kTimeoutMs);
   can_flDrive.ConfigSelectedFeedbackSensor(FeedbackDevice::IntegratedSensor, 0, kTimeoutMs);
-  can_flDrive.SetInverted(true);
+  can_flDrive.SetInverted(false);
   can_flDrive.ConfigNeutralDeadband(0.04, kTimeoutMs);
   can_flDrive.SetNeutralMode(NeutralMode::Brake);
   can_flDrive.ConfigNominalOutputForward(0, kTimeoutMs);
@@ -61,7 +61,7 @@ void Robot::ConfigMotors()
 
   can_rlDrive.ConfigFactoryDefault(kTimeoutMs);
   can_rlDrive.ConfigSelectedFeedbackSensor(FeedbackDevice::IntegratedSensor, 0, kTimeoutMs);
-  can_rlDrive.SetInverted(true);
+  can_rlDrive.SetInverted(false);
   can_rlDrive.ConfigNeutralDeadband(0.04, kTimeoutMs);
   can_rlDrive.SetNeutralMode(NeutralMode::Brake);
   can_rlDrive.ConfigNominalOutputForward(0, kTimeoutMs);
@@ -85,7 +85,7 @@ void Robot::ConfigMotors()
 
   can_rrDrive.ConfigFactoryDefault(kTimeoutMs);
   can_rrDrive.ConfigSelectedFeedbackSensor(FeedbackDevice::IntegratedSensor, 0, kTimeoutMs);
-  can_rrDrive.SetInverted(true);
+  can_rrDrive.SetInverted(false);
   can_rrDrive.ConfigNeutralDeadband(0.04, kTimeoutMs);
   can_rrDrive.SetNeutralMode(NeutralMode::Brake);
   can_rrDrive.ConfigNominalOutputForward(0, kTimeoutMs);
@@ -215,37 +215,6 @@ void Robot::ConfigMotors()
   can_winch1.ConfigForwardSoftLimitEnable(true);
   can_winch1.ConfigReverseSoftLimitEnable(true);
   
-  can_winch2.ConfigFactoryDefault(kTimeoutMs);
-  can_winch2.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0,kTimeoutMs);
-  can_winch2.SetNeutralMode(NeutralMode::Brake);
-  can_winch2.SetSensorPhase(false);
-  can_winch2.SetInverted(false);
-  can_winch2.SetSafetyEnabled(false);
-  can_winch2.ConfigPeakCurrentLimit(constants::kPeakCurrentLimit, kTimeoutMs);
-  can_winch2.ConfigPeakCurrentDuration(constants::kPeakCurrentDuration, kTimeoutMs);
-  can_winch2.ConfigContinuousCurrentLimit(constants::kContinuousCurrentLimit, kTimeoutMs);
-  can_winch2.EnableCurrentLimit(true);
-  can_winch2.SetStatusFramePeriod(StatusFrameEnhanced::Status_13_Base_PIDF0, 10, 10);
-  can_winch2.SetStatusFramePeriod(StatusFrameEnhanced::Status_10_MotionMagic, 10, 10);
-  can_winch2.ConfigNominalOutputForward(0, kTimeoutMs);
-  can_winch2.ConfigNominalOutputReverse(0, kTimeoutMs);
-  can_winch2.ConfigPeakOutputForward(1, kTimeoutMs);
-  can_winch2.ConfigPeakOutputReverse(-1, kTimeoutMs);
-  can_winch2.Config_kF(0, constants::kWinch_F, kTimeoutMs);
-  can_winch2.Config_kP(0, constants::kWinch_P, kTimeoutMs);
-  can_winch2.Config_kI(0, constants::kWinch_I, kTimeoutMs);
-  can_winch2.Config_kD(0, constants::kWinch_D, kTimeoutMs);
-  can_winch2.Config_IntegralZone(0, 400, kTimeoutMs);
-  can_winch2.ConfigAllowableClosedloopError(0,constants::kWinch_AllowableError,kTimeoutMs); 
-  can_winch2.ConfigMotionCruiseVelocity(constants::kWinch_MotionCruiseVelocity, kTimeoutMs);
-  can_winch2.ConfigMotionAcceleration(constants::kWinch_MotionAcceleration, kTimeoutMs);
-  can_winch2.ConfigMotionSCurveStrength(constants::kWinch_MotionSCurveStrength, kTimeoutMs);
-  can_winch2.ConfigVoltageCompSaturation(constants::kVoltageCompSaturation);
-  can_winch2.EnableVoltageCompensation(true);
-  can_winch2.ConfigForwardSoftLimitThreshold(constants::kWinch_ExtendLimit);
-  can_winch2.ConfigReverseSoftLimitThreshold(constants::kWinch_RetractLimit);
-  can_winch2.ConfigForwardSoftLimitEnable(true);
-  can_winch2.ConfigReverseSoftLimitEnable(true);
 
   can_intake.ConfigFactoryDefault(kTimeoutMs);
   can_intake.ConfigOpenloopRamp(constants::kOpenLoopRamp, kTimeoutMs);
@@ -294,7 +263,7 @@ void Robot::ConfigMotors()
   can_wrist.ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0,kTimeoutMs);
   can_wrist.SetNeutralMode(NeutralMode::Brake);
   can_wrist.SetSensorPhase(false);
-  can_wrist.SetInverted(false);
+  can_wrist.SetInverted(true);
   can_wrist.SetSafetyEnabled(false);
   can_wrist.ConfigPeakCurrentLimit(constants::kPeakCurrentLimit, kTimeoutMs);
   can_wrist.ConfigPeakCurrentDuration(constants::kPeakCurrentDuration, kTimeoutMs);
@@ -305,7 +274,7 @@ void Robot::ConfigMotors()
   can_wrist.ConfigNominalOutputForward(0, kTimeoutMs);
   can_wrist.ConfigNominalOutputReverse(0, kTimeoutMs);
   can_wrist.ConfigPeakOutputForward(1, kTimeoutMs);
-  can_wrist.ConfigPeakOutputReverse(1, kTimeoutMs);  
+  can_wrist.ConfigPeakOutputReverse(-1, kTimeoutMs);  
   can_wrist.Config_kF(0, constants::kWrist_F, kTimeoutMs);
   can_wrist.Config_kP(0, constants::kWrist_P, kTimeoutMs);
   can_wrist.Config_kI(0, constants::kWrist_I, kTimeoutMs);

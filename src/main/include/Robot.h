@@ -22,9 +22,12 @@ class Robot : public frc::TimedRobot {
  {
    std::string name = "";
    double actAngle = 0.0;  //current encoder position - encoder offset
+   double actSP = 0.0;     //before clamping setpoint
    double turnSP = 0.0;    //desired direction from joystick
-   double turnPV = 0.0;    //effective angle - direction wheel is moving
-   double flip = 1.0;      //-1 if drive is reversed, 1 if drive is not reversed
+   double actPV = 0.0;     //effective angle before checking move delta
+   double turnPV = 0.0;    //effective angle after checking move delta
+   double inFlip = 1.0;    //-1 if reversed, 1 not reversed  - before checking move delta
+   double outFlip = 1.0;   //-1 if reversed, 1 not reversed  - after checking move delta
    double turnOUT = 0.0;   //output to turn motor
    double driveOUT = 0.0;  //output to drive motor
  };
@@ -48,10 +51,12 @@ class Robot : public frc::TimedRobot {
   double CheckWrap(double pos);
   void CheckAngles(SwerveType st);
   double GetEffectiveAngle(double actAngle,double flip);
+  void InitializeSteerAngles();
   void DriveSwerve(double FWD, double STR, double RCW);
   void ConfigMotors();
   void Self_Level();
   void RunAuto_1();
+  void RunAuto_2();
   bool AutoIsRunning();
   void AutoReset();
   void InitBuffer(BufferedTrajectoryPointStream *bufstrm, const double profile[][2], int totalCnt, bool reverse);
@@ -70,6 +75,7 @@ class Robot : public frc::TimedRobot {
     bool SwerveOrientationToField = false;
     double Wrist_SP = 0.0;
     double Wrist_POS = 0;  //0 = 0deg  1 = -90deg   2= 90deg
+    double Brake_POS = 0;  //0 = Engaged  1 = Released
     
     //CAN Devices
     WPI_TalonFX can_frTurn{constants::kFrontRightTurn_ID};
@@ -89,8 +95,7 @@ class Robot : public frc::TimedRobot {
     WPI_CANCoder can_rrEncoder{constants::kRearRightEncoder_ID};
 
     WPI_TalonSRX can_winch1{constants::kWinch1_ID};
-    WPI_TalonSRX can_winch2{constants::kWinch2_ID};
-
+    
     WPI_TalonSRX can_intake{constants::kIntake_ID};
 
     WPI_TalonFX can_arm{constants::kArm_ID};

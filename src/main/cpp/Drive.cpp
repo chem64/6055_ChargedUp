@@ -4,7 +4,7 @@
 double Robot::CheckWrap(double pos)
 {
   double ret = pos;
-  ret -= 360. * std::floor((ret + 180.) * (1. / 360.)); 
+  ret -= 360.0 * std::floor((ret + 180.0) * (1.0 / 360.0)); 
   return ret;
 }
 
@@ -20,26 +20,65 @@ void Robot::StopAllDrives()
   can_flDrive.StopMotor();
 }
 
+//reverses angle by 180 degrees
+double flip180(double angle)
+{
+  double ret = angle;
+
+  if(ret <= 0.0) ret += 180.0;
+  else ret -= 180.0;
+  return ret;
+}
+
+//gets direction drive is moving
 double Robot::GetEffectiveAngle(double actAngle,double flip)
 {
   //get value of actual turn angle
   double ret = actAngle;
   //now get the effective angle (actual direction of movement)
-  if (flip < 0) (ret<=0.0)?ret+=180.0:ret-=180.0;
+  //if (flip < 0) (ret<=0.0)?ret+=180.0:ret-=180.0;
+  if(flip < 0.0) ret = flip180(actAngle);
   return ret;
 }
 
 void Robot::CheckAngles(SwerveType st)
 {
-  if(fabs(st.turnSP - st.turnPV) > 90.)
+  if(constants::kDebugValues)
   {
-    printf("%s: sp=%.1f pv=%.1f act=%.1f flip=%.1f out=%.1f\n",st.name,st.turnSP,st.turnPV,st.actAngle,st.flip,st.turnOUT);
+    if(st.inFlip != st.outFlip)
+    {
+      printf("%s: ang=%.1f asp=%.1f apv=%.1f\n",st.name.c_str(),st.actAngle,st.actSP,st.actPV);
+      printf("%s: sp=%.1f pv=%.1f inF=%.1f outF=%.1f out=%.1f\n",st.name.c_str(),st.turnSP,st.turnPV,st.inFlip,st.outFlip,st.turnOUT);
+    }
   }
 };
 
+void Robot::InitializeSteerAngles()
+{
+  frSwerve.actAngle = CheckWrap(can_frEncoder.GetPosition()-constants::kFrontRightOffset);  
+  frSwerve.actPV = GetEffectiveAngle(frSwerve.actAngle,frSwerve.inFlip);
+  frSwerve.actSP = frSwerve.actPV;
+  frSwerve.turnSP = frSwerve.actPV;
+  frSwerve.turnPV = frSwerve.actPV;
+  flSwerve.actAngle = CheckWrap(can_flEncoder.GetPosition()-constants::kFrontLeftOffset);  
+  flSwerve.actPV = GetEffectiveAngle(flSwerve.actAngle,flSwerve.inFlip);
+  flSwerve.actSP = flSwerve.actPV;
+  flSwerve.turnSP = flSwerve.actPV;
+  flSwerve.turnPV = flSwerve.actPV;
+  rlSwerve.actAngle = CheckWrap(can_rlEncoder.GetPosition()-constants::kRearLeftOffset);  
+  rlSwerve.actPV = GetEffectiveAngle(rlSwerve.actAngle,rlSwerve.inFlip);
+  rlSwerve.actSP = rlSwerve.actPV;
+  rlSwerve.turnSP = rlSwerve.actPV;
+  rlSwerve.turnPV = rlSwerve.actPV;
+  rrSwerve.actAngle = CheckWrap(can_rrEncoder.GetPosition()-constants::kRearRightOffset);  
+  rrSwerve.actPV = GetEffectiveAngle(rrSwerve.actAngle,rrSwerve.inFlip);
+  rrSwerve.actSP = rrSwerve.actPV;
+  rrSwerve.turnSP = rrSwerve.actPV;
+  rrSwerve.turnPV = rrSwerve.actPV;
+}
+
 void Robot::DriveSwerve(double FWD, double STR, double RCW)
 {
- 
   double L = constants::kWheelbase; //wheelbase (from center of front wheel to center of back wheel)
   double W = constants::kWheelwidth; //wheelwidth (from center of left wheel to center of right wheel)
   double R = sqrt((L * L) + (W * W));
@@ -80,92 +119,96 @@ void Robot::DriveSwerve(double FWD, double STR, double RCW)
 
   //Get wheel angles
   frSwerve.actAngle = CheckWrap(can_frEncoder.GetPosition()-constants::kFrontRightOffset);  //cancoder position accumulates on every turn - does not automatically wrap
-  frSwerve.turnPV = GetEffectiveAngle(frSwerve.actAngle,frSwerve.flip);
+  frSwerve.actPV = GetEffectiveAngle(frSwerve.actAngle,frSwerve.inFlip);
+  frSwerve.outFlip = frSwerve.inFlip;
+  frSwerve.turnPV = frSwerve.actPV;
   flSwerve.actAngle = CheckWrap(can_flEncoder.GetPosition()-constants::kFrontLeftOffset);  //cancoder position accumulates on every turn - does not automatically wrap
-  flSwerve.turnPV = GetEffectiveAngle(flSwerve.actAngle,flSwerve.flip);
+  flSwerve.actPV = GetEffectiveAngle(flSwerve.actAngle,flSwerve.inFlip);
+  flSwerve.outFlip = flSwerve.inFlip;
+  flSwerve.turnPV = flSwerve.actPV;
   rlSwerve.actAngle = CheckWrap(can_rlEncoder.GetPosition()-constants::kRearLeftOffset);  //cancoder position accumulates on every turn - does not automatically wrap
-  rlSwerve.turnPV = GetEffectiveAngle(rlSwerve.actAngle,rlSwerve.flip);
+  rlSwerve.actPV = GetEffectiveAngle(rlSwerve.actAngle,rlSwerve.inFlip);
+  rlSwerve.outFlip = rlSwerve.inFlip;
+  rlSwerve.turnPV = rlSwerve.actPV;  
   rrSwerve.actAngle = CheckWrap(can_rrEncoder.GetPosition()-constants::kRearRightOffset);  //cancoder position accumulates on every turn - does not automatically wrap
-  rrSwerve.turnPV = GetEffectiveAngle(rrSwerve.actAngle,rrSwerve.flip);
-  
-  //if no joystick input - return without changing angles
+  rrSwerve.actPV = GetEffectiveAngle(rrSwerve.actAngle,rrSwerve.inFlip);
+  rrSwerve.outFlip = rrSwerve.inFlip;
+  rrSwerve.turnPV = rrSwerve.actPV;
+    
+  //if no joystick input - don't change turn setpoints and zero speeds
   if (FWD == 0 && STR == 0 && RCW == 0)
   {
-    StopAllDrives();
-    return;
+    ws1 = 0.0;
+    ws2 = 0.0;
+    ws3 = 0.0;
+    ws4 = 0.0;
   }
-
-  //Front Right
-  //set setpoint to joystick
-  frSwerve.turnSP = wa1;
-  //if desired setpoint change is greater than our setting - flip direction of drive
-  if (CheckWrap(fabs(frSwerve.turnSP - frSwerve.turnPV)) > constants::kSwerveAngleBreak)
+  else //calculate turn setpoints and new effective angles
   {
-    frSwerve.flip *= -1.0;
-    //frSwerve.turnPV = GetEffectiveAngle(frSwerve.actAngle,frSwerve.flip);
-    (frSwerve.turnPV<=0.0)?frSwerve.turnPV+=180.0:frSwerve.turnPV-=180.0;
+    //Front Right
+    frSwerve.actSP = wa1;
+    frSwerve.turnSP = std::clamp(wa1,-180.0,180.0);
+    if (CheckWrap(fabs(frSwerve.turnSP - frSwerve.actPV)) > constants::kSwerveAngleBreak)
+    {
+      frSwerve.outFlip = frSwerve.inFlip *= -1.0;
+      frSwerve.turnPV = flip180(frSwerve.actPV);
+    }
+    CheckAngles(frSwerve);
+    frSwerve.inFlip = frSwerve.outFlip;
+
+    //Front Left
+    flSwerve.actSP = wa2;
+    flSwerve.turnSP = std::clamp(wa2,-180.0,180.0);
+    if (CheckWrap(fabs(flSwerve.turnSP - flSwerve.actPV)) > constants::kSwerveAngleBreak)
+    {
+      flSwerve.outFlip = flSwerve.inFlip *= -1.0;
+      flSwerve.turnPV = flip180(flSwerve.actPV);
+    }
+    CheckAngles(flSwerve);
+    flSwerve.inFlip = flSwerve.outFlip;
+
+    //Rear Left
+    rlSwerve.actSP = wa3;
+    rlSwerve.turnSP = std::clamp(wa3,-180.0,180.0);
+    if (CheckWrap(fabs(rlSwerve.turnSP - rlSwerve.actPV)) > constants::kSwerveAngleBreak)
+    {
+      rlSwerve.outFlip = rlSwerve.inFlip *= -1.0;
+      rlSwerve.turnPV = flip180(rlSwerve.actPV);
+    }
+    CheckAngles(rlSwerve);
+    rlSwerve.inFlip = rlSwerve.outFlip;
+
+    //Rear Right
+    rrSwerve.actSP = wa4;
+    rrSwerve.turnSP = std::clamp(wa4,-180.0,180.0);
+    if (CheckWrap(fabs(rrSwerve.turnSP - rrSwerve.actPV)) > constants::kSwerveAngleBreak)
+    {
+      rrSwerve.outFlip = rrSwerve.inFlip *= -1.0;
+      rrSwerve.turnPV = flip180(rrSwerve.actPV);
+    }
+    CheckAngles(rrSwerve);
+    rrSwerve.inFlip = rrSwerve.outFlip;
   }
-  //calculate PID based on effective angle and setpoint
+  
+  //calculate turn PID based on effective angle and setpoint
+  //output to drives
   frSwerve.turnOUT = std::clamp(frTurnPID.Calculate(frSwerve.turnPV,frSwerve.turnSP),-1.0,1.0);
-  CheckAngles(frSwerve);
   can_frTurn.Set(ControlMode::PercentOutput,frSwerve.turnOUT);
-  frSwerve.driveOUT = ws1 * frSwerve.flip;
+  frSwerve.driveOUT = ws1 * frSwerve.outFlip;
   can_frDrive.Set(ControlMode::PercentOutput,frSwerve.driveOUT);
-
-  //Front Left
-  //set setpoint to joystick
-  flSwerve.turnSP = wa2;
-  //if desired setpoint change is greater than our setting - flip direction of drive
-  if (CheckWrap(fabs(flSwerve.turnSP - flSwerve.turnPV)) > constants::kSwerveAngleBreak)
-  {
-    flSwerve.flip *= -1.0;
-    //flSwerve.turnPV = GetEffectiveAngle(flSwerve.actAngle,flSwerve.flip);
-    (flSwerve.turnPV<=0.0)?flSwerve.turnPV+=180.0:flSwerve.turnPV-=180.0;
-  }
-  //calculate PID based on effective angle and setpoint
+    
   flSwerve.turnOUT = std::clamp(flTurnPID.Calculate(flSwerve.turnPV,flSwerve.turnSP),-1.0,1.0);
-  CheckAngles(flSwerve);
   can_flTurn.Set(ControlMode::PercentOutput,flSwerve.turnOUT);
-  flSwerve.driveOUT = ws2 * flSwerve.flip;
+  flSwerve.driveOUT = ws2 * flSwerve.outFlip;
   can_flDrive.Set(ControlMode::PercentOutput,flSwerve.driveOUT);
-
-  //Rear Left
-  //set setpoint to joystick
-  rlSwerve.turnSP = wa3;
-  //if desired setpoint change is greater than our setting - flip direction of drive
-  if (CheckWrap(fabs(rlSwerve.turnSP - rlSwerve.turnPV)) > constants::kSwerveAngleBreak)
-  {
-    rlSwerve.flip *= -1.0;
-    //rlSwerve.turnPV = GetEffectiveAngle(rlSwerve.actAngle,rlSwerve.flip);
-    (rlSwerve.turnPV<=0.0)?rlSwerve.turnPV+=180.0:rlSwerve.turnPV-=180.0;
-  }
-  //calculate PID based on effective angle and setpoint
+    
   rlSwerve.turnOUT = std::clamp(rlTurnPID.Calculate(rlSwerve.turnPV,rlSwerve.turnSP),-1.0,1.0);
-  CheckAngles(rlSwerve);
   can_rlTurn.Set(ControlMode::PercentOutput,rlSwerve.turnOUT);
-  rlSwerve.driveOUT = ws3 * rlSwerve.flip;
+  rlSwerve.driveOUT = ws3 * rlSwerve.outFlip;
   can_rlDrive.Set(ControlMode::PercentOutput,rlSwerve.driveOUT);
-
-  //Rear Right
-  //set setpoint to joystick
-  rrSwerve.turnSP = wa4;
-  //if desired setpoint change is greater than our setting - flip direction of drive
-  if (CheckWrap(fabs(rrSwerve.turnSP - rrSwerve.turnPV)) > constants::kSwerveAngleBreak)
-  {
-    rrSwerve.flip *= -1.0;
-    //rrSwerve.turnPV = GetEffectiveAngle(rrSwerve.actAngle,rrSwerve.flip);
-    (rrSwerve.turnPV<=0.0)?rrSwerve.turnPV+=180.0:rrSwerve.turnPV-=180.0;
-  }
-  //calculate PID based on effective angle and setpoint
+  
   rrSwerve.turnOUT = std::clamp(rrTurnPID.Calculate(rrSwerve.turnPV,rrSwerve.turnSP),-1.0,1.0);
-  CheckAngles(rrSwerve);
   can_rrTurn.Set(ControlMode::PercentOutput,rrSwerve.turnOUT);
-  rrSwerve.driveOUT = ws4 * rrSwerve.flip;
+  rrSwerve.driveOUT = ws4 * rrSwerve.outFlip;
   can_rrDrive.Set(ControlMode::PercentOutput,rrSwerve.driveOUT);
 }
-
-
-  
-
-
-

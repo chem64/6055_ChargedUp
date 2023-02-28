@@ -36,8 +36,8 @@ void Robot::RobotInit()
   InitBuffer(AutoRev16_RightBufStrm,auto16_R,auto16_size,true);
   AutoFwd2_LeftBufStrm = new BufferedTrajectoryPointStream();
   AutoFwd2_RightBufStrm = new BufferedTrajectoryPointStream();
-  InitBuffer(AutoFwd2_LeftBufStrm,auto2_L,auto2_size,true);
-  InitBuffer(AutoFwd2_RightBufStrm,auto2_R,auto2_size,true);
+  InitBuffer(AutoFwd2_LeftBufStrm,auto2_L,auto2_size,false);
+  InitBuffer(AutoFwd2_RightBufStrm,auto2_R,auto2_size,false);
 
   //FMSMatch = frc::DriverStation::IsFMSAttached(); //is this a real match with FMS
   AutoTimer = new frc::Timer();
@@ -90,40 +90,50 @@ void Robot::RobotPeriodic()
       ntBOSS->PutNumber("CurMode", CurMode);
   }
 
-  static int counter3 = 0;
-  counter3++;
-  if(counter3 >= 50) //1 secs
+  if(constants::kDebugValues)
   {
-    counter3=0;
-    ntBOSS->PutNumber("FR_DIR",frSwerve.turnPV);
-    ntBOSS->PutNumber("FR_DIST", frSwerve.driveOUT);
-    ntBOSS->PutNumber("FL_DIR",flSwerve.turnPV);
-    ntBOSS->PutNumber("FL_DIST", flSwerve.driveOUT);
-    ntBOSS->PutNumber("RL_DIR",rlSwerve.turnPV);
-    ntBOSS->PutNumber("RL_DIST", rlSwerve.driveOUT);
-    ntBOSS->PutNumber("RR_DIR",rrSwerve.turnPV);
-    ntBOSS->PutNumber("RR_DIST", rrSwerve.driveOUT);
-    ntBOSS->PutNumber("Winch",fabs(can_winch1.GetSelectedSensorPosition())/constants::kWinchCountsPerInch);
-    ntBOSS->PutNumber("Arm",can_arm.GetSelectedSensorPosition());
-    ntBOSS->PutNumber("Wrist",can_wrist.GetSelectedSensorPosition());
-    //ntBOSS->PutNumber("joy_FORWARD", forward);
-    //ntBOSS->PutNumber("joy_STRAFE", strafe);
-    //ntBOSS->PutNumber("joy_ROTATE", rotate);
-    ntBOSS->PutNumber("HeadingOffset", HeadingOffset);
-    ntBOSS->PutNumber("Heading", Heading);
-    ntBOSS->PutNumber("SwerveOrientationToField", SwerveOrientationToField);
-    try
+    static int counter3 = 0;
+    counter3++;
+    if(counter3 >= 50) //1 secs
     {
-      ntBOSS->PutNumber("ahrs_PITCH", ahrs->GetPitch());
-      ntBOSS->PutNumber("ahrs_ROLL", ahrs->GetRoll());
-    }
-    catch(const std::exception e)
-    {
-      ntBOSS->PutNumber("ahrs_PITCH", 0);
-      ntBOSS->PutNumber("ahrs_ROLL", 0);
+      counter3=0;
+      ntBOSS->PutNumber("FR_DIR",frSwerve.turnPV);
+      ntBOSS->PutNumber("FR_ERR",frTurnPID.GetPositionError());
+      ntBOSS->PutNumber("FR_DIST", frSwerve.driveOUT);
+      ntBOSS->PutNumber("FL_DIR",flSwerve.turnPV);
+      ntBOSS->PutNumber("FL_ERR",flTurnPID.GetPositionError());
+      ntBOSS->PutNumber("FL_DIST", flSwerve.driveOUT);
+      ntBOSS->PutNumber("RL_DIR",rlSwerve.turnPV);
+      ntBOSS->PutNumber("RL_ERR",rlTurnPID.GetPositionError());
+      ntBOSS->PutNumber("RL_DIST", rlSwerve.driveOUT);
+      ntBOSS->PutNumber("RR_DIR",rrSwerve.turnPV);
+      ntBOSS->PutNumber("RR_ERR",rrTurnPID.GetPositionError());
+      ntBOSS->PutNumber("RR_DIST", rrSwerve.driveOUT);
+      ntBOSS->PutNumber("WinchCounts",can_winch1.GetSelectedSensorPosition());
+      ntBOSS->PutNumber("Winch",fabs(can_winch1.GetSelectedSensorPosition())/constants::kWinchCountsPerInch);
+      ntBOSS->PutNumber("Arm",can_arm.GetSelectedSensorPosition());
+      ntBOSS->PutNumber("Wrist",can_wrist.GetSelectedSensorPosition());
+      ntBOSS->PutNumber("Wrist_SP",Wrist_SP);
+      ntBOSS->PutNumber("Brake",Brake_POS);
+      //ntBOSS->PutNumber("joy_FORWARD", forward);
+      //ntBOSS->PutNumber("joy_STRAFE", strafe);
+      //ntBOSS->PutNumber("joy_ROTATE", rotate);
+      ntBOSS->PutNumber("HeadingOffset", HeadingOffset);
+      ntBOSS->PutNumber("Heading", Heading);
+      ntBOSS->PutNumber("SwerveOrientationToField", SwerveOrientationToField);
+      try
+      {
+        ntBOSS->PutNumber("ahrs_PITCH", ahrs->GetPitch());
+        ntBOSS->PutNumber("ahrs_ROLL", ahrs->GetRoll());
+      }
+      catch(const std::exception e)
+      {
+        ntBOSS->PutNumber("ahrs_PITCH", 0);
+        ntBOSS->PutNumber("ahrs_ROLL", 0);
+      }
+      ntBOSS->PutString("AutoStatus", "");
     }
   }
-  ntBOSS->PutString("AutoStatus", "");
 }
 
 void Robot::AutonomousInit() 
@@ -138,12 +148,13 @@ void Robot::AutonomousPeriodic()
 {
   //execute the selected auto routine
   if(dAutoSelect == 1)  RunAuto_1();
-  //if(dAutoSelect == 2)  RunAuto_2();
+  if(dAutoSelect == 2)  RunAuto_2();
 }
 
 void Robot::TeleopInit() 
 {
   CurMode = 2;
+  InitializeSteerAngles();
 }
 
 void Robot::TeleopPeriodic() 
@@ -168,7 +179,7 @@ void Robot::TeleopPeriodic()
   double fforward = spdFilter.Calculate(forward);
   if(forward != 0) forward = fforward;
   if(fabs(strafe)<.15) {strafe = 0;}
-  if(fabs(rotate)<.2) {rotate = 0;}
+  if(fabs(rotate)<.25) {rotate = 0;}
 
   DriveSwerve(forward, strafe, rotate);
 
@@ -178,18 +189,7 @@ void Robot::TeleopPeriodic()
   //test rotating arm
   double playerY = stickPlayer->GetRawAxis(1);
   if(fabs(playerY) < 0.15) playerY = 0.0;
-  //need to set limits first !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  //can_arm.Set(ControlMode::PercentOutput,-(playerY/3.0));
-
-  /*//handle rotating arm
-  ArmRot_Setpoint = clamp2(ArmRot_Setpoint,constants::climber::kArmRot_ReverseLimit,constants::climber::kArmRot_ForwardLimit);
-  //MotorArmRot1_Rotate->Set(ControlMode::MotionMagic,ArmRot_Setpoint);
-  double scalar = (100.0 - (constants::climber::kArmRot_ForwardLimit - ArmRot_Setpoint))/100.0;  //multiplier = 1 @ 343 and 0 @ 242
-  MotorArmRot1_Rotate->Set(ControlMode::MotionMagic,ArmRot_Setpoint,DemandType::DemandType_ArbitraryFeedForward,constants::climber::kArmRot_AFF * scalar);
-  
-  ArmExt_Setpoint = clamp2(ArmExt_Setpoint,constants::climber::kArmExt_RetractLimit,constants::climber::kArmExt_ExtendLimit);
-  MotorArmRot1_Extend->Set(ControlMode::MotionMagic,ArmExt_Setpoint);
-  MotorArmRot2_Extend->Set(ControlMode::MotionMagic,ArmExt_Setpoint);*/
+  can_arm.Set(ControlMode::PercentOutput,playerY);
 
   //handle intake wheel rotation
   double player_axis3 = stickPlayer->GetRawAxis(3);
@@ -199,36 +199,30 @@ void Robot::TeleopPeriodic()
   can_intake.Set(ControlMode::PercentOutput,intake_speed);
 
   //handle wrist
-  bool player_button4 = stickPlayer->GetRawButtonPressed(4); //left top button
+  bool player_button3 = stickPlayer->GetRawButtonPressed(3); //left top button
   bool player_button1 = stickPlayer->GetRawButtonPressed(1); //trigger
-  bool player_button5 = stickPlayer->GetRawButtonPressed(5); //right top button
-  if(player_button1 && !player_button4 && !player_button5) 
+  bool player_button4 = stickPlayer->GetRawButtonPressed(4); //right top button
+  if(player_button1 && !player_button3 && !player_button4) 
   {
-    if(Wrist_POS == 1) Wrist_SP += constants::kWristRotateCounts;
-    if(Wrist_POS == 2) Wrist_SP -= constants::kWristRotateCounts;
-    Wrist_POS = 0;
+    Wrist_SP = 0;
   }
-  if(!player_button1 && player_button4 && !player_button5) 
+  if(!player_button1 && player_button3 && !player_button4) 
   {
-    if(Wrist_POS == 0) Wrist_SP -= constants::kWristRotateCounts;
-    if(Wrist_POS == 2) Wrist_SP -= constants::kWristRotateCounts * 2;
-    Wrist_POS = 1;
+    Wrist_SP = -3141;
   }
-  if(!player_button1 && !player_button4 && player_button5) 
+  if(!player_button1 && !player_button3 && player_button4) 
   {
-    if(Wrist_POS == 1) Wrist_SP += constants::kWristRotateCounts * 2;
-    if(Wrist_POS == 0) Wrist_SP += constants::kWristRotateCounts;
-    Wrist_POS = 2;
+    Wrist_SP = 3141;
   }
   can_wrist.Set(ControlMode::MotionMagic,Wrist_SP);
 
   //handle winch
-  double player_axis2 = stickPlayer->GetRawAxis(2) / 2;
-  /*double winch_SP = std::clamp(winch_SP,constants::kWinch_RetractLimit,constants::kWinch_ExtendLimit);
-  can_winch1.Set(ControlMode::MotionMagic,winch_SP);
-  can_winch2.Set(ControlMode::MotionMagic,winch_SP);*/
+  double player_axis2 = stickPlayer->GetRawAxis(2)/2;
   can_winch1.Set(ControlMode::PercentOutput,player_axis2);
-  can_winch2.Set(ControlMode::PercentOutput,player_axis2);
+
+  if(fabs(player_axis2) > 0.15) ArmBrake.SetPosition(1.0); //release brake
+  else ArmBrake.SetPosition(0.0); //engage brake
+  Brake_POS = ArmBrake.GetPosition();  
 }
 
 void Robot::DisabledInit() 
@@ -254,7 +248,7 @@ void Robot::TestPeriodic()
   ArmBrake.SetBounds(2.0, 1.8, 1.5, 1.2, 1.0); */
   /*static bool BrakeOn;
   if(m_driveController.GetRawButtonPressed(1)) BrakeOn = !BrakeOn;
-  if(BrakeOn) ArmBrake.SetPosition(0.0);  //retracted in
+  if(BrakeOn) ArmBrake.SetPosition(0.0);  //retracted in  brake on?
   if(!BrakeOn) ArmBrake.SetPosition(1.0); //extended out */
 }
 
