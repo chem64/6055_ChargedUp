@@ -3,7 +3,7 @@
 
 namespace constants
 {
-  constexpr bool kUseStickBOSS = true;
+  constexpr bool kUseStickBOSS = false;
   constexpr bool kDebugValues = true;
   constexpr bool kSilenceJoystickWarnings = true;
   constexpr double kSwerveAngleBreak = 90;
@@ -67,13 +67,13 @@ namespace constants
   constexpr double kTurnVoltageCompSaturation = 12.0;
   constexpr double kTurnClosedLoopRamp = 1.0;
 
-  constexpr double kDrive_kF = 0.015; //0.015;
+  constexpr double kDrive_kF = 0.025; //0.015;
   constexpr double kDrive_kP = 1.0;
   constexpr double kDrive_kI = 0.001;
   constexpr double kDrive_kD = 0.5;
   constexpr double kDriveOpenLoopRamp = 1.0;
-  constexpr double kDrivePeakOutputForward = 0.5;
-  constexpr double kDrivePeakOutputReverse = -0.5;
+  constexpr double kDrivePeakOutputForward = 0.8;
+  constexpr double kDrivePeakOutputReverse = -0.8;
   //Supply Limiting is to prevent breakers tripping or brownouts
   constexpr double kDriveSupplyCurrentLimit = 30.0; //amps
   constexpr double kDrivePeakCurrentLimit = 35.0; //amps
@@ -91,8 +91,8 @@ namespace constants
   constexpr double kWinch_MotionCruiseVelocity = 60000;
   constexpr double kWinch_MotionAcceleration = 120000;
   constexpr double kWinch_MotionSCurveStrength = 5;
-  constexpr double kWinch_RetractLimit = -46250; //max possible move in any mode  //1ft = -12150  2ft = -24296
-  constexpr double kWinch_ExtendLimit = -18750;    //min possible move in any mode
+  constexpr double kWinch_ExtendLimit = 20000; //max possible move in any mode  //1ft = -12150  2ft = -24296
+  constexpr double kWinch_RetractLimit = -2800;    //min possible move in any mode
   constexpr double kWinch_AllowableError = 20;
 
   constexpr double kContinuousCurrentLimit = 15.0;

@@ -32,12 +32,12 @@ void Robot::RobotInit()
   }
   AutoRev16_LeftBufStrm = new BufferedTrajectoryPointStream();
   AutoRev16_RightBufStrm = new BufferedTrajectoryPointStream();
-  InitBuffer(AutoRev16_LeftBufStrm,auto16_L,auto16_size,true);
-  InitBuffer(AutoRev16_RightBufStrm,auto16_R,auto16_size,true);
+  InitBuffer(AutoRev16_LeftBufStrm,auto16_L,auto16_size,false);
+  InitBuffer(AutoRev16_RightBufStrm,auto16_R,auto16_size,false);
   AutoFwd2_LeftBufStrm = new BufferedTrajectoryPointStream();
   AutoFwd2_RightBufStrm = new BufferedTrajectoryPointStream();
-  InitBuffer(AutoFwd2_LeftBufStrm,auto2_L,auto2_size,false);
-  InitBuffer(AutoFwd2_RightBufStrm,auto2_R,auto2_size,false);
+  InitBuffer(AutoFwd2_LeftBufStrm,auto2_L,auto2_size,true);
+  InitBuffer(AutoFwd2_RightBufStrm,auto2_R,auto2_size,true);
 
   //FMSMatch = frc::DriverStation::IsFMSAttached(); //is this a real match with FMS
   AutoTimer = new frc::Timer();
@@ -138,6 +138,7 @@ void Robot::RobotPeriodic()
 
 void Robot::AutonomousInit() 
 {
+  InitializeSteerAngles();
   //last chance check for auto selection
   dAutoSelect = (int) ntBOSS->GetNumber("AutoSelect", dAutoSelect);
   AutoState = 0;
@@ -146,6 +147,7 @@ void Robot::AutonomousInit()
 
 void Robot::AutonomousPeriodic() 
 {
+  
   //execute the selected auto routine
   if(dAutoSelect == 1)  RunAuto_1();
   if(dAutoSelect == 2)  RunAuto_2();
@@ -154,7 +156,6 @@ void Robot::AutonomousPeriodic()
 void Robot::TeleopInit() 
 {
   CurMode = 2;
-  InitializeSteerAngles();
 }
 
 void Robot::TeleopPeriodic() 
@@ -218,11 +219,13 @@ void Robot::TeleopPeriodic()
 
   //handle winch
   double player_axis2 = stickPlayer->GetRawAxis(2)/2;
+  //if (fabs(player_axis2) < 0.25) player_axis2 = 0.0;
   can_winch1.Set(ControlMode::PercentOutput,player_axis2);
 
-  if(fabs(player_axis2) > 0.15) ArmBrake.SetPosition(1.0); //release brake
-  else ArmBrake.SetPosition(0.0); //engage brake
-  Brake_POS = ArmBrake.GetPosition();  
+  double winch_pos = can_winch1.GetSelectedSensorPosition();
+  if(fabs(player_axis2)  < 0.15 || (winch_pos < 1500 && player_axis2 < 0.15)) ArmBrake.SetPosition(0.0); //engage brake
+  else ArmBrake.SetPosition(1.0); //release brake
+  Brake_POS = ArmBrake.GetPosition(); 
 }
 
 void Robot::DisabledInit() 

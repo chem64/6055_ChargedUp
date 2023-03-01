@@ -7,6 +7,26 @@ bool Robot::AutoIsRunning()
   else return false;
 }
 
+void Robot::SteerAuto()
+{
+  frSwerve.turnSP = 0.0;
+  frSwerve.turnPV = CheckWrap(can_frEncoder.GetPosition()-constants::kFrontRightOffset);
+  frSwerve.turnOUT = std::clamp(frTurnPID.Calculate(frSwerve.turnPV,frSwerve.turnSP),-1.0,1.0);
+  can_frTurn.Set(ControlMode::PercentOutput,frSwerve.turnOUT);
+  flSwerve.turnSP = 0.0;
+  flSwerve.turnPV = CheckWrap(can_flEncoder.GetPosition()-constants::kFrontLeftOffset);
+  flSwerve.turnOUT = std::clamp(flTurnPID.Calculate(flSwerve.turnPV,flSwerve.turnSP),-1.0,1.0);
+  can_flTurn.Set(ControlMode::PercentOutput,flSwerve.turnOUT);
+  rlSwerve.turnSP = 0.0;
+  rlSwerve.turnPV = CheckWrap(can_rlEncoder.GetPosition()-constants::kRearLeftOffset);
+  rlSwerve.turnOUT = std::clamp(rlTurnPID.Calculate(rlSwerve.turnPV,rlSwerve.turnSP),-1.0,1.0);
+  can_rlTurn.Set(ControlMode::PercentOutput,rlSwerve.turnOUT);
+  rrSwerve.turnSP = 0.0;
+  rrSwerve.turnPV = CheckWrap(can_rrEncoder.GetPosition()-constants::kRearRightOffset);
+  rrSwerve.turnOUT = std::clamp(rrTurnPID.Calculate(rrSwerve.turnPV,rrSwerve.turnSP),-1.0,1.0);
+  can_rrTurn.Set(ControlMode::PercentOutput,rrSwerve.turnOUT);
+}
+
 void Robot::ZeroDistance()
 {
   //set ticks equal to zero
@@ -84,7 +104,7 @@ void::Robot::RunAuto_1()
             //if(constants::kAutoLoggingEnabled) ntBOSS->PutNumber("AutoState", AutoState);
             break;
         case 10: //place object
-            if(AutoTimer->AdvanceIfElapsed((units::time::second_t) 5))
+            if(AutoTimer->AdvanceIfElapsed((units::time::second_t) 1))
             {
                 AutoState = 20;
                 //if(constants::kAutoLoggingEnabled) ntBOSS->PutNumber("AutoState", AutoState);

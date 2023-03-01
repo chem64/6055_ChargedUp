@@ -186,7 +186,7 @@ void Robot::ConfigMotors()
   can_winch1.ConfigFactoryDefault(kTimeoutMs);
   can_winch1.ConfigSelectedFeedbackSensor(FeedbackDevice::QuadEncoder, 0,kTimeoutMs);
   can_winch1.SetNeutralMode(NeutralMode::Brake);
-  can_winch1.SetSensorPhase(false);
+  can_winch1.SetSensorPhase(true);
   can_winch1.SetInverted(false);
   can_winch1.SetSafetyEnabled(false);
   can_winch1.ConfigPeakCurrentLimit(constants::kPeakCurrentLimit, kTimeoutMs);

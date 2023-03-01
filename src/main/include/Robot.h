@@ -58,6 +58,7 @@ class Robot : public frc::TimedRobot {
   void RunAuto_1();
   void RunAuto_2();
   bool AutoIsRunning();
+  void SteerAuto();
   void AutoReset();
   void InitBuffer(BufferedTrajectoryPointStream *bufstrm, const double profile[][2], int totalCnt, bool reverse);
   void ZeroDistance();
@@ -95,7 +96,7 @@ class Robot : public frc::TimedRobot {
     WPI_CANCoder can_rrEncoder{constants::kRearRightEncoder_ID};
 
     WPI_TalonSRX can_winch1{constants::kWinch1_ID};
-    
+
     WPI_TalonSRX can_intake{constants::kIntake_ID};
 
     WPI_TalonFX can_arm{constants::kArm_ID};
