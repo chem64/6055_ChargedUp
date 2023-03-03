@@ -233,7 +233,7 @@ void Robot::ConfigMotors()
   can_arm.ConfigFactoryDefault(kTimeoutMs);
   can_arm.ConfigSelectedFeedbackSensor(FeedbackDevice::IntegratedSensor, 0, kTimeoutMs);
   can_arm.SetNeutralMode(NeutralMode::Brake);
-  can_arm.SetInverted(true);
+  can_arm.SetInverted(false);
   can_arm.SetSafetyEnabled(false);
   can_arm.ConfigSupplyCurrentLimit(armSCLC); //current limiting
   can_arm.ConfigOpenloopRamp(1.0, kTimeoutMs);
@@ -259,32 +259,5 @@ void Robot::ConfigMotors()
   can_arm.ConfigForwardSoftLimitEnable(true);
   can_arm.ConfigReverseSoftLimitEnable(true);
 
-  can_wrist.ConfigFactoryDefault(kTimeoutMs);
-  can_wrist.ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0,kTimeoutMs);
-  can_wrist.SetNeutralMode(NeutralMode::Brake);
-  can_wrist.SetSensorPhase(false);
-  can_wrist.SetInverted(true);
-  can_wrist.SetSafetyEnabled(false);
-  can_wrist.ConfigPeakCurrentLimit(constants::kPeakCurrentLimit, kTimeoutMs);
-  can_wrist.ConfigPeakCurrentDuration(constants::kPeakCurrentDuration, kTimeoutMs);
-  can_wrist.ConfigContinuousCurrentLimit(constants::kContinuousCurrentLimit, kTimeoutMs);
-  can_wrist.EnableCurrentLimit(true);
-  can_wrist.SetStatusFramePeriod(StatusFrameEnhanced::Status_13_Base_PIDF0, 10, 10);
-  can_wrist.SetStatusFramePeriod(StatusFrameEnhanced::Status_10_MotionMagic, 10, 10);
-  can_wrist.ConfigNominalOutputForward(0, kTimeoutMs);
-  can_wrist.ConfigNominalOutputReverse(0, kTimeoutMs);
-  can_wrist.ConfigPeakOutputForward(1, kTimeoutMs);
-  can_wrist.ConfigPeakOutputReverse(-1, kTimeoutMs);  
-  can_wrist.Config_kF(0, constants::kWrist_F, kTimeoutMs);
-  can_wrist.Config_kP(0, constants::kWrist_P, kTimeoutMs);
-  can_wrist.Config_kI(0, constants::kWrist_I, kTimeoutMs);
-  can_wrist.Config_kD(0, constants::kWrist_D, kTimeoutMs);
-  can_wrist.Config_IntegralZone(0, 400, kTimeoutMs);
-  can_wrist.ConfigAllowableClosedloopError(0,10,kTimeoutMs);  
-  can_wrist.ConfigMotionCruiseVelocity(constants::kWrist_MotionCruiseVelocity, kTimeoutMs);
-  can_wrist.ConfigMotionAcceleration(constants::kWrist_MotionAcceleration, kTimeoutMs);
-  can_wrist.ConfigMotionSCurveStrength(constants::kWrist_MotionSCurveStrength, kTimeoutMs);
-  can_wrist.ConfigVoltageCompSaturation(constants::kVoltageCompSaturation);
-  can_wrist.EnableVoltageCompensation(true);
-  
+    
 }

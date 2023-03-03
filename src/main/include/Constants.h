@@ -9,7 +9,7 @@ namespace constants
   constexpr double kSwerveAngleBreak = 90;
   constexpr double kSwerveDriveSpeedFilter = 2.0;  //smaller is more filtering (slower to reach top speed) - will bypass filter when joystick released
 
-  constexpr double kSelfLevelDeadband = 3.0;  //deadband before level correction is done
+  constexpr double kSelfLevelDeadband = 5.0;  //deadband before level correction is done
   constexpr double kSelfLevelGain = 0.35;     //gain applied to drive motor in response to angle
   constexpr double kRadtoDeg = 57.2957795;
   constexpr double kDeg2Rad = 0.017453292519943295;
@@ -57,18 +57,18 @@ namespace constants
   constexpr double kTurnPeakOutputForward = 0.5;
   constexpr double kTurnPeakOutputReverse = -0.5;
   //Supply Limiting is to prevent breakers tripping or brownouts
-  constexpr double kTurnSupplyCurrentLimit = 20.0; //amps
-  constexpr double kTurnPeakCurrentLimit = 25.0; //amps
+  constexpr double kTurnSupplyCurrentLimit = 25.0; //amps
+  constexpr double kTurnPeakCurrentLimit = 30.0; //amps
   constexpr double kTurnPeakCurrentDuration = 25; //msecs
   //Stator limiting is to limit acceleration or heat
-  constexpr double kTurnStatorCurrentLimit = 20.0;
-  constexpr double kTurnStatorPeakCurrentLimit = 25.0; //amps
+  constexpr double kTurnStatorCurrentLimit = 25.0;
+  constexpr double kTurnStatorPeakCurrentLimit = 30.0; //amps
   constexpr double kTurnStatorPeakCurrentDuration = 15; //msecs
   constexpr double kTurnVoltageCompSaturation = 12.0;
-  constexpr double kTurnClosedLoopRamp = 1.0;
+  constexpr double kTurnClosedLoopRamp = 0.5;
 
-  constexpr double kDrive_kF = 0.025; //0.015;
-  constexpr double kDrive_kP = 1.0;
+  constexpr double kDrive_kF = 1.25; //0.015;
+  constexpr double kDrive_kP = 3.0;
   constexpr double kDrive_kI = 0.001;
   constexpr double kDrive_kD = 0.5;
   constexpr double kDriveOpenLoopRamp = 1.0;
@@ -95,17 +95,17 @@ namespace constants
   constexpr double kWinch_RetractLimit = -2800;    //min possible move in any mode
   constexpr double kWinch_AllowableError = 20;
 
-  constexpr double kContinuousCurrentLimit = 15.0;
-  constexpr double kSupplyCurrentLimit = 20.0;
-  constexpr double kPeakCurrentLimit = 20.0;
+  constexpr double kContinuousCurrentLimit = 25.0;
+  constexpr double kSupplyCurrentLimit = 30.0;
+  constexpr double kPeakCurrentLimit = 30.0;
   constexpr double kPeakCurrentDuration = 25; //msecs
   constexpr double kVoltageCompSaturation = 12.0;
 
   constexpr double kOpenLoopRamp = 1.0;
 
-  constexpr double kArmContinuousCurrentLimit = 30.0;
-  constexpr double kArmSupplyCurrentLimit = 30.0;
-  constexpr double kArmPeakCurrentLimit = 35.0;
+  constexpr double kArmContinuousCurrentLimit = 40.0;
+  constexpr double kArmSupplyCurrentLimit = 40.0;
+  constexpr double kArmPeakCurrentLimit = 45.0;
   constexpr double kArmPeakCurrentDuration = 25; //msecs
   constexpr double kArmVoltageCompSaturation = 12.0;
 
@@ -118,8 +118,8 @@ namespace constants
   constexpr double kArm_MotionAcceleration = 100000;
   constexpr double kArm_MotionSCurveStrength = 5;
   
-  constexpr double kArm_ForwardLimit = 263600;   //max forward movement - should be forward stop
-  constexpr double kArm_ReverseLimit = -54766;   //min reverse movement - should be reverse stop
+  constexpr double kArm_ForwardLimit = 280000;   //max forward movement - should be forward stop 170877
+  constexpr double kArm_ReverseLimit = -127;   //min reverse movement - should be reverse stop
   constexpr double kArm_Range = kArm_ForwardLimit - kArm_ReverseLimit;
   constexpr double kArm_AllowableError = 0.03 * kArm_Range;   //deadband around target for position control      
 

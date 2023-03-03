@@ -3,6 +3,7 @@
 #include <frc/TimedRobot.h>
 #include <frc/XboxController.h>
 #include <frc/Joystick.h>
+#include <frc/DigitalInput.h>
 #include <ctre/Phoenix.h>
 #include "frc/DriverStation.h"
 #include "networktables/NetworkTable.h"
@@ -49,7 +50,7 @@ class Robot : public frc::TimedRobot {
 
   double GetHeading();
   double CheckWrap(double pos);
-  void CheckAngles(SwerveType st);
+  void PrintAngles(SwerveType st);
   double GetEffectiveAngle(double actAngle,double flip);
   void InitializeSteerAngles();
   void DriveSwerve(double FWD, double STR, double RCW);
@@ -101,9 +102,9 @@ class Robot : public frc::TimedRobot {
 
     WPI_TalonFX can_arm{constants::kArm_ID};
 
-    WPI_TalonSRX can_wrist{constants::kWrist_ID};
-
     frc::Servo ArmBrake{0};         
+    
+    frc::DigitalInput autoJumper{0};
 
     //SWERVE
 

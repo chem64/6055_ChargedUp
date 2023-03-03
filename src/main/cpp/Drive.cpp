@@ -41,17 +41,14 @@ double Robot::GetEffectiveAngle(double actAngle,double flip)
   return ret;
 }
 
-void Robot::CheckAngles(SwerveType st)
+void Robot::PrintAngles(SwerveType st)
 {
   if(constants::kDebugValues)
   {
-    if(st.inFlip != st.outFlip)
-    {
-      printf("%s: ang=%.1f asp=%.1f apv=%.1f\n",st.name.c_str(),st.actAngle,st.actSP,st.actPV);
-      printf("%s: sp=%.1f pv=%.1f inF=%.1f outF=%.1f out=%.1f\n",st.name.c_str(),st.turnSP,st.turnPV,st.inFlip,st.outFlip,st.turnOUT);
-    }
+    printf("%s: ang=%.1f asp=%.1f apv=%.1f inF=%.1f\n",st.name.c_str(),st.actAngle,st.actSP,st.actPV,st.inFlip);
+    printf("sp=%.1f pv=%.1f outF=%.1f outT=%.1f outD=%.1f\n",st.turnSP,st.turnPV,st.outFlip,st.turnOUT,st.driveOUT);
   }
-};
+}
 
 void Robot::InitializeSteerAngles()
 {
@@ -153,9 +150,7 @@ void Robot::DriveSwerve(double FWD, double STR, double RCW)
       frSwerve.outFlip = frSwerve.inFlip *= -1.0;
       frSwerve.turnPV = flip180(frSwerve.actPV);
     }
-    CheckAngles(frSwerve);
-    frSwerve.inFlip = frSwerve.outFlip;
-
+    
     //Front Left
     flSwerve.actSP = wa2;
     flSwerve.turnSP = std::clamp(wa2,-180.0,180.0);
@@ -164,8 +159,6 @@ void Robot::DriveSwerve(double FWD, double STR, double RCW)
       flSwerve.outFlip = flSwerve.inFlip *= -1.0;
       flSwerve.turnPV = flip180(flSwerve.actPV);
     }
-    CheckAngles(flSwerve);
-    flSwerve.inFlip = flSwerve.outFlip;
 
     //Rear Left
     rlSwerve.actSP = wa3;
@@ -175,8 +168,6 @@ void Robot::DriveSwerve(double FWD, double STR, double RCW)
       rlSwerve.outFlip = rlSwerve.inFlip *= -1.0;
       rlSwerve.turnPV = flip180(rlSwerve.actPV);
     }
-    CheckAngles(rlSwerve);
-    rlSwerve.inFlip = rlSwerve.outFlip;
 
     //Rear Right
     rrSwerve.actSP = wa4;
@@ -186,8 +177,6 @@ void Robot::DriveSwerve(double FWD, double STR, double RCW)
       rrSwerve.outFlip = rrSwerve.inFlip *= -1.0;
       rrSwerve.turnPV = flip180(rrSwerve.actPV);
     }
-    CheckAngles(rrSwerve);
-    rrSwerve.inFlip = rrSwerve.outFlip;
   }
   
   //calculate turn PID based on effective angle and setpoint
@@ -196,19 +185,27 @@ void Robot::DriveSwerve(double FWD, double STR, double RCW)
   can_frTurn.Set(ControlMode::PercentOutput,frSwerve.turnOUT);
   frSwerve.driveOUT = ws1 * frSwerve.outFlip;
   can_frDrive.Set(ControlMode::PercentOutput,frSwerve.driveOUT);
+  if(frTurnPID.GetPositionError() > 90.) PrintAngles(frSwerve);
+  frSwerve.inFlip = frSwerve.outFlip;
     
   flSwerve.turnOUT = std::clamp(flTurnPID.Calculate(flSwerve.turnPV,flSwerve.turnSP),-1.0,1.0);
   can_flTurn.Set(ControlMode::PercentOutput,flSwerve.turnOUT);
   flSwerve.driveOUT = ws2 * flSwerve.outFlip;
   can_flDrive.Set(ControlMode::PercentOutput,flSwerve.driveOUT);
+  if(flTurnPID.GetPositionError() > 90.) PrintAngles(flSwerve);
+  flSwerve.inFlip = flSwerve.outFlip;
     
   rlSwerve.turnOUT = std::clamp(rlTurnPID.Calculate(rlSwerve.turnPV,rlSwerve.turnSP),-1.0,1.0);
   can_rlTurn.Set(ControlMode::PercentOutput,rlSwerve.turnOUT);
   rlSwerve.driveOUT = ws3 * rlSwerve.outFlip;
   can_rlDrive.Set(ControlMode::PercentOutput,rlSwerve.driveOUT);
+  if(rlTurnPID.GetPositionError() > 90.) PrintAngles(rlSwerve);
+  rlSwerve.inFlip = rlSwerve.outFlip;
   
   rrSwerve.turnOUT = std::clamp(rrTurnPID.Calculate(rrSwerve.turnPV,rrSwerve.turnSP),-1.0,1.0);
   can_rrTurn.Set(ControlMode::PercentOutput,rrSwerve.turnOUT);
   rrSwerve.driveOUT = ws4 * rrSwerve.outFlip;
   can_rrDrive.Set(ControlMode::PercentOutput,rrSwerve.driveOUT);
+  if(rrTurnPID.GetPositionError() > 90.) PrintAngles(rrSwerve);
+  rrSwerve.inFlip = rrSwerve.outFlip;
 }

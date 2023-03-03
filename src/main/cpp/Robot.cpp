@@ -54,6 +54,7 @@ void Robot::RobotPeriodic()
   //only update this until match starts
   if(!MatchStart)
   {
+    if(stickXbox->GetRawButtonPressed(1)) {SwerveOrientationToField = !SwerveOrientationToField;}
     static int counter1 = 0;
     counter1++;
     if(counter1 >= 50) //1 secs
@@ -97,10 +98,12 @@ void Robot::RobotPeriodic()
     if(counter3 >= 50) //1 secs
     {
       counter3=0;
-      ntBOSS->PutNumber("FR_DIR",frSwerve.turnPV);
-      ntBOSS->PutNumber("FR_ERR",frTurnPID.GetPositionError());
-      ntBOSS->PutNumber("FR_DIST", frSwerve.driveOUT);
-      ntBOSS->PutNumber("FL_DIR",flSwerve.turnPV);
+      //ntBOSS->PutNumber("FR_ANG",can_frEncoder.GetPosition());
+      //ntBOSS->PutNumber("FR_EFF",frSwerve.turnPV);
+      //ntBOSS->PutNumber("FR_TOUT", frSwerve.driveOUT);
+      //ntBOSS->PutNumber("FR_ERR",frTurnPID.GetPositionError());
+      //ntBOSS->PutNumber("FR_DOUT", frSwerve.driveOUT);
+      /*ntBOSS->PutNumber("FL_DIR",flSwerve.turnPV);
       ntBOSS->PutNumber("FL_ERR",flTurnPID.GetPositionError());
       ntBOSS->PutNumber("FL_DIST", flSwerve.driveOUT);
       ntBOSS->PutNumber("RL_DIR",rlSwerve.turnPV);
@@ -108,18 +111,16 @@ void Robot::RobotPeriodic()
       ntBOSS->PutNumber("RL_DIST", rlSwerve.driveOUT);
       ntBOSS->PutNumber("RR_DIR",rrSwerve.turnPV);
       ntBOSS->PutNumber("RR_ERR",rrTurnPID.GetPositionError());
-      ntBOSS->PutNumber("RR_DIST", rrSwerve.driveOUT);
+      ntBOSS->PutNumber("RR_DIST", rrSwerve.driveOUT);*/
       ntBOSS->PutNumber("WinchCounts",can_winch1.GetSelectedSensorPosition());
-      ntBOSS->PutNumber("Winch",fabs(can_winch1.GetSelectedSensorPosition())/constants::kWinchCountsPerInch);
+      //ntBOSS->PutNumber("Winch",fabs(can_winch1.GetSelectedSensorPosition())/constants::kWinchCountsPerInch);
       ntBOSS->PutNumber("Arm",can_arm.GetSelectedSensorPosition());
-      ntBOSS->PutNumber("Wrist",can_wrist.GetSelectedSensorPosition());
-      ntBOSS->PutNumber("Wrist_SP",Wrist_SP);
-      ntBOSS->PutNumber("Brake",Brake_POS);
+      //ntBOSS->PutNumber("Brake",Brake_POS);
       //ntBOSS->PutNumber("joy_FORWARD", forward);
       //ntBOSS->PutNumber("joy_STRAFE", strafe);
       //ntBOSS->PutNumber("joy_ROTATE", rotate);
-      ntBOSS->PutNumber("HeadingOffset", HeadingOffset);
-      ntBOSS->PutNumber("Heading", Heading);
+      //ntBOSS->PutNumber("HeadingOffset", HeadingOffset);
+      //ntBOSS->PutNumber("Heading", Heading);
       ntBOSS->PutNumber("SwerveOrientationToField", SwerveOrientationToField);
       try
       {
@@ -141,6 +142,7 @@ void Robot::AutonomousInit()
   InitializeSteerAngles();
   //last chance check for auto selection
   dAutoSelect = (int) ntBOSS->GetNumber("AutoSelect", dAutoSelect);
+  //if(autoJumper.Get()) dAutoSelect = 1;
   AutoState = 0;
   CurMode = 1;
 }
@@ -190,7 +192,7 @@ void Robot::TeleopPeriodic()
   //test rotating arm
   double playerY = stickPlayer->GetRawAxis(1);
   if(fabs(playerY) < 0.15) playerY = 0.0;
-  can_arm.Set(ControlMode::PercentOutput,playerY);
+  can_arm.Set(ControlMode::PercentOutput,-playerY);
 
   //handle intake wheel rotation
   double player_axis3 = stickPlayer->GetRawAxis(3);
@@ -199,24 +201,7 @@ void Robot::TeleopPeriodic()
   if(player_axis3 > 0.75) intake_speed = constants::kIntakeSpeed;
   can_intake.Set(ControlMode::PercentOutput,intake_speed);
 
-  //handle wrist
-  bool player_button3 = stickPlayer->GetRawButtonPressed(3); //left top button
-  bool player_button1 = stickPlayer->GetRawButtonPressed(1); //trigger
-  bool player_button4 = stickPlayer->GetRawButtonPressed(4); //right top button
-  if(player_button1 && !player_button3 && !player_button4) 
-  {
-    Wrist_SP = 0;
-  }
-  if(!player_button1 && player_button3 && !player_button4) 
-  {
-    Wrist_SP = -3141;
-  }
-  if(!player_button1 && !player_button3 && player_button4) 
-  {
-    Wrist_SP = 3141;
-  }
-  can_wrist.Set(ControlMode::MotionMagic,Wrist_SP);
-
+  
   //handle winch
   double player_axis2 = stickPlayer->GetRawAxis(2)/2;
   //if (fabs(player_axis2) < 0.25) player_axis2 = 0.0;
